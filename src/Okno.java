@@ -20,10 +20,15 @@ public class Okno extends JFrame implements ActionListener{
 
 	protected Platno platno;
 	
+	
+	private JMenuItem igraClovekRacunalnik;
+	private JMenuItem igraRacunalnikClovek;
+	private JMenuItem igraClovekClovek;
+	private JMenuItem igraRacunalnikRacunalnik;
+	
 	private JMenuItem menuOdpri, menuShrani, menuKoncaj;
-	private JMenuItem menuPrazen, menuCikel, menuPoln, menuPolnDvodelen;
-	private JMenuItem menuBarvaPovezave, menuBarvaTocke, menuBarvaAktivneTocke, menuBarvaOznaceneTocke;
-	private JMenuItem menuBarvaRoba, menuDebelinaRoba, menuDebelinaPovezave, menuPolmer;
+	private JMenuItem menuVelikostPlosce;
+	private JMenuItem menuBarvaPrvega, menuBarvaDrugega, menuBarvaPlosce;
 	
 	public Okno() {
 		super(); // poklciemo konstruktor od jframe
@@ -35,7 +40,7 @@ public class Okno extends JFrame implements ActionListener{
 		setJMenuBar(menubar);
 		
 		JMenu menuDatoteka = dodajMenu(menubar, "Datoteka");
-		JMenu menuGraf = dodajMenu(menubar, "Graf");
+		JMenu menuIgra = dodajMenu(menubar, "Igra");
 		JMenu menuNastavitve = dodajMenu(menubar, "Nastavitve");
 		
 		menuOdpri = dodajMenuItem(menuDatoteka, "Odpri ...");
@@ -44,22 +49,14 @@ public class Okno extends JFrame implements ActionListener{
 		menuKoncaj = dodajMenuItem(menuDatoteka, "Končaj");
 		
 		
-		menuPrazen = dodajMenuItem(menuGraf, "Prazen ...");
-		menuCikel = dodajMenuItem(menuGraf, "Cikel ...");
-		menuPoln = dodajMenuItem(menuGraf, "Poln ...");
-		menuPolnDvodelen = dodajMenuItem(menuGraf, "Poln dvodelen ...");
+		menuVelikostPlosce = dodajMenuItem(menuNastavitve, "Velikost plošče ...");
+		menuBarvaPlosce = dodajMenuItem(menuNastavitve, "Barva plošče ...");
+		menuNastavitve.addSeparator();
+		menuBarvaPrvega = dodajMenuItem(menuNastavitve, "Barva prvega igralca ...");
+		menuBarvaDrugega = dodajMenuItem(menuNastavitve, "Barva drugega igralca ...");
 		
-		menuBarvaPovezave = dodajMenuItem(menuNastavitve, "Barva povezave ...");
-		menuBarvaTocke = dodajMenuItem(menuNastavitve, "Barva točke ...");
-		menuBarvaAktivneTocke = dodajMenuItem(menuNastavitve, "Barva aktivne točke ...");
-		menuBarvaOznaceneTocke = dodajMenuItem(menuNastavitve, "Barva označene točke ...");
-		menuBarvaRoba = dodajMenuItem(menuNastavitve, "Barva roba ...");
-		menuNastavitve.addSeparator();
-		menuDebelinaRoba = dodajMenuItem(menuNastavitve, "Debelina roba ...");
-		menuDebelinaPovezave = dodajMenuItem(menuNastavitve, "Debelina povezave ...");
-		menuNastavitve.addSeparator();
-		menuPolmer = dodajMenuItem(menuNastavitve, "Polmer ...");
-
+		
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
@@ -76,6 +73,53 @@ public class Okno extends JFrame implements ActionListener{
 		return menuitem;
 	}
 
-
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		Object objekt = e.getSource();
+		if (objekt == menuOdpri) {
+			JFileChooser dialog = new JFileChooser();
+			int izbira = dialog.showOpenDialog(this);
+			if (izbira == JFileChooser.APPROVE_OPTION) {
+				String ime = dialog.getSelectedFile().getPath();
+				//Graf graf = Graf.preberi(ime);
+				//platno.nastaviGraf(graf);
+			}
+		}
+		else if (objekt == menuShrani) {
+			JFileChooser dialog = new JFileChooser();
+			int izbira = dialog.showSaveDialog(this);
+			if (izbira == JFileChooser.APPROVE_OPTION) {
+				String ime = dialog.getSelectedFile().getPath();
+				//platno.graf.shrani(ime);
+			}
+		}
+		else if (objekt == menuKoncaj) {
+			dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+		//else if (objekt == menuBarvaPrvega) {
+			//Color barva = JColorChooser.showDialog(this, "Izberi barvo prvega igralca", platno.barvaPrvega);
+			//if (barva != null) {
+				//platno.barvaPrvega = barva;
+				//repaint();
+			//}
+		//}
+		//else if (objekt == menuBarvaDrugega) {
+			//Color barva = JColorChooser.showDialog(this, "Izberi barvo drugega igralca", platno.barvaDrugega);
+			//if (barva != null) {
+				//platno.barvaDrugega = barva;
+				//repaint();
+			//}
+		//}
+		//else if (objekt == menuBarvaPlosce) {
+			//Color barva = JColorChooser.showDialog(this, "Izberi barvo plošče", platno.barvaPlosce);
+			//if (barva != null) {
+				//platno.barvaPlosce = barva;
+				//repaint();
+			//}
+		//}
 		
-}
+	}
+		
+

@@ -11,6 +11,9 @@ import javax.swing.JPanel;
 public class Platno extends JPanel {
 	
 	protected Color barvaPovezave;
+	protected Color barvaPrvega;
+	protected Color barvaDrugega;
+	protected Color barvaPlosce;
 	
 	public Platno(int sirina, int visina) {
 		super();
