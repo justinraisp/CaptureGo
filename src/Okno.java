@@ -18,7 +18,7 @@ import javax.swing.JTextField;
 @SuppressWarnings("serial")
 public class Okno extends JFrame implements ActionListener{
 
-	protected Platno platno;
+	protected IgralnoPolje polje;
 	
 	
 	private JMenuItem igraClovekRacunalnik;
@@ -33,8 +33,8 @@ public class Okno extends JFrame implements ActionListener{
 	public Okno() {
 		super(); // poklciemo konstruktor od jframe
 		setTitle("Capture Go");
-		platno = new Platno(800, 800);
-		add(platno);
+		polje = new IgralnoPolje(800, 800);
+		add(polje);
 		
 		JMenuBar menubar = new JMenuBar();
 		setJMenuBar(menubar);
