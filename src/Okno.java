@@ -48,6 +48,11 @@ public class Okno extends JFrame implements ActionListener{
 		menuDatoteka.addSeparator();
 		menuKoncaj = dodajMenuItem(menuDatoteka, "Končaj");
 		
+		igraClovekRacunalnik = dodajMenuItem(menuIgra, "Človek vs Računalnik");
+		igraRacunalnikClovek = dodajMenuItem(menuIgra, "Računalnik vs Človek");
+		igraClovekClovek = dodajMenuItem(menuIgra, "Človek vs Človek");
+		igraRacunalnikRacunalnik = dodajMenuItem(menuIgra, "Računalnik vs Računalnik");
+		
 		
 		menuVelikostPlosce = dodajMenuItem(menuNastavitve, "Velikost plošče ...");
 		menuBarvaPlosce = dodajMenuItem(menuNastavitve, "Barva plošče ...");
@@ -97,29 +102,30 @@ public class Okno extends JFrame implements ActionListener{
 		else if (objekt == menuKoncaj) {
 			dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 			}
+		
+		else if (objekt == menuBarvaPrvega) {
+			Color barva = JColorChooser.showDialog(this, "Izberi barvo prvega igralca", platno.barvaPrvega);
+			if (barva != null) {
+				platno.barvaPrvega = barva;
+				repaint();
+			}
 		}
-		//else if (objekt == menuBarvaPrvega) {
-			//Color barva = JColorChooser.showDialog(this, "Izberi barvo prvega igralca", platno.barvaPrvega);
-			//if (barva != null) {
-				//platno.barvaPrvega = barva;
-				//repaint();
-			//}
-		//}
-		//else if (objekt == menuBarvaDrugega) {
-			//Color barva = JColorChooser.showDialog(this, "Izberi barvo drugega igralca", platno.barvaDrugega);
-			//if (barva != null) {
-				//platno.barvaDrugega = barva;
-				//repaint();
-			//}
-		//}
-		//else if (objekt == menuBarvaPlosce) {
-			//Color barva = JColorChooser.showDialog(this, "Izberi barvo plošče", platno.barvaPlosce);
-			//if (barva != null) {
-				//platno.barvaPlosce = barva;
-				//repaint();
-			//}
-		//}
+		else if (objekt == menuBarvaDrugega) {
+			Color barva = JColorChooser.showDialog(this, "Izberi barvo drugega igralca", platno.barvaDrugega);
+			if (barva != null) {
+				platno.barvaDrugega = barva;
+				repaint();
+			}
+		}
+		else if (objekt == menuBarvaPlosce) {
+			Color barva = JColorChooser.showDialog(this, "Izberi barvo plošče", platno.barvaPlosce);
+			if (barva != null) {
+				platno.barvaPlosce = barva;
+				repaint();
+			}
+		}
 		
 	}
-		
+	
+}
 
