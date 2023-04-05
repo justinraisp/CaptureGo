@@ -1,6 +1,6 @@
 
 public class Igra {
-
+	
 	//tu se mora ustvariti nova igra
 	public final static int velikostPlosce = 19;
 	

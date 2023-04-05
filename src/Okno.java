@@ -26,9 +26,11 @@ public class Okno extends JFrame implements ActionListener{
 	private JMenuItem igraClovekClovek;
 	private JMenuItem igraRacunalnikRacunalnik;
 	
+	private JMenuItem algoritemRacunalnik;
+	
 	private JMenuItem menuOdpri, menuShrani, menuKoncaj;
 	private JMenuItem menuVelikostPlosce;
-	private JMenuItem menuBarvaPrvega, menuBarvaDrugega, menuBarvaPlosce;
+	private JMenuItem menuBarvaPrvega, menuBarvaDrugega, menuBarvaRoba;
 	
 	public Okno() {
 		super(); // poklciemo konstruktor od jframe
@@ -41,6 +43,7 @@ public class Okno extends JFrame implements ActionListener{
 		
 		JMenu menuDatoteka = dodajMenu(menubar, "Datoteka");
 		JMenu menuIgra = dodajMenu(menubar, "Igra");
+		JMenu menuAlgoritemRacunalnika = dodajMenu(menubar, "Algoritem računalnika");
 		JMenu menuNastavitve = dodajMenu(menubar, "Nastavitve");
 		
 		menuOdpri = dodajMenuItem(menuDatoteka, "Odpri ...");
@@ -55,7 +58,7 @@ public class Okno extends JFrame implements ActionListener{
 		
 		
 		menuVelikostPlosce = dodajMenuItem(menuNastavitve, "Velikost plošče ...");
-		menuBarvaPlosce = dodajMenuItem(menuNastavitve, "Barva plošče ...");
+		menuBarvaRoba = dodajMenuItem(menuNastavitve, "Barva roba ...");
 		menuNastavitve.addSeparator();
 		menuBarvaPrvega = dodajMenuItem(menuNastavitve, "Barva prvega igralca ...");
 		menuBarvaDrugega = dodajMenuItem(menuNastavitve, "Barva drugega igralca ...");
@@ -88,7 +91,7 @@ public class Okno extends JFrame implements ActionListener{
 			if (izbira == JFileChooser.APPROVE_OPTION) {
 				String ime = dialog.getSelectedFile().getPath();
 				//Graf graf = Graf.preberi(ime);
-				//platno.nastaviGraf(graf);
+				//polje.nastaviGraf(graf);
 			}
 		}
 		else if (objekt == menuShrani) {
@@ -96,7 +99,7 @@ public class Okno extends JFrame implements ActionListener{
 			int izbira = dialog.showSaveDialog(this);
 			if (izbira == JFileChooser.APPROVE_OPTION) {
 				String ime = dialog.getSelectedFile().getPath();
-				//platno.graf.shrani(ime);
+				//polje.graf.shrani(ime);
 			}
 		}
 		else if (objekt == menuKoncaj) {
@@ -104,28 +107,35 @@ public class Okno extends JFrame implements ActionListener{
 			}
 		
 		else if (objekt == menuBarvaPrvega) {
-			Color barva = JColorChooser.showDialog(this, "Izberi barvo prvega igralca", platno.barvaPrvega);
+			Color barva = JColorChooser.showDialog(this, "Izberi barvo prvega igralca", polje.barvaPrvega);
 			if (barva != null) {
-				platno.barvaPrvega = barva;
+				polje.barvaPrvega = barva;
 				repaint();
 			}
 		}
 		else if (objekt == menuBarvaDrugega) {
-			Color barva = JColorChooser.showDialog(this, "Izberi barvo drugega igralca", platno.barvaDrugega);
+			Color barva = JColorChooser.showDialog(this, "Izberi barvo drugega igralca", polje.barvaDrugega);
 			if (barva != null) {
-				platno.barvaDrugega = barva;
+				polje.barvaDrugega = barva;
 				repaint();
 			}
 		}
-		else if (objekt == menuBarvaPlosce) {
-			Color barva = JColorChooser.showDialog(this, "Izberi barvo plošče", platno.barvaPlosce);
+		else if (objekt == menuBarvaRoba) {
+			Color barva = JColorChooser.showDialog(this, "Izberi barvo roba", polje.barvaRoba);
 			if (barva != null) {
-				platno.barvaPlosce = barva;
+				polje.barvaRoba = barva;
 				repaint();
 			}
 		}
-		
+		else if (objekt == menuVelikostPlosce) {
+			String velikostPlosce = JOptionPane.showInputDialog(this, "Velikost plošče:");
+			if (velikostPlosce != null && velikostPlosce.matches("\\d+")) {
+				polje.velikostPlosce =Integer.parseInt(velikostPlosce);
+				repaint();
+			}
+		}
+		}
 	}
 	
-}
+
 

@@ -36,12 +36,17 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		setFocusable(true);
+		barvaPrvega = Color.BLACK;
+		barvaDrugega = Color.WHITE;
+		barvaRoba = Color.BLACK;
+		barvaPlosce = Color.WHITE;
 		this.setPreferredSize(new Dimension(sirina,visina));
-		this.setBackground(Color.WHITE);
+		this.setBackground(barvaPlosce);
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		setFocusable(true);
+
 		
 		
 	}
@@ -60,7 +65,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		Graphics2D g2 = (Graphics2D)g;
 		double w = sirinaKvadrata();
 		
-		g2.setColor(Color.BLACK);
+		g2.setColor(barvaRoba);
 		g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
 		for (int i = 2; i < velikostPlosce + 3; i++) {
 			g2.drawLine((int)(i * w),(int)(2 * w),
