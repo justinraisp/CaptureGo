@@ -13,6 +13,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -22,13 +23,17 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionListener, KeyListener{
 	
-
+	protected Set<Zeton> zetoni;
 	
 	protected Color barvaPrvega;
 	protected Color barvaDrugega;
 	protected Color barvaPlosce;
 	protected Color barvaRoba;
 	protected Stroke debelinaRoba;
+	protected double polmer;
+	
+	private int klikX;
+	private int klikY;
 	
 	
 	public int velikostPlosce = Igra.velikostPlosce;
@@ -45,6 +50,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		barvaDrugega = Color.WHITE;
 		barvaRoba = Color.BLACK;
 		barvaPlosce = Color.WHITE;
+		polmer = 5;
 		this.setPreferredSize(new Dimension(sirina,visina));
 		this.setBackground(barvaPlosce);
 		addMouseListener(this);
@@ -74,6 +80,10 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 					(int)(i * w), (int)((velikostPlosce + 2) * w));
 			g2.drawLine((int)(2 * w), (int)(i * w),
 				   (int)((velikostPlosce + 2) * w), (int)(i * w));
+		}
+		for(Zeton z: polje.zetoni.values()) {
+			g2.fillOval(round(z.x - polmer), round(z.y - polmer), premer, premer);
+			g2.setColor(z.barva);
 		}
 	}
 
@@ -121,7 +131,8 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
+		int x = klikX = e.getX();
+		int y = klikY = e.getY();
 		
 	}
 
@@ -129,8 +140,6 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 
