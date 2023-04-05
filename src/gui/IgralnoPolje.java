@@ -1,3 +1,7 @@
+package gui;
+
+
+import logika.Igra;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,13 +22,14 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionListener, KeyListener{
 	
-	protected Igra igra;
+
 	
 	protected Color barvaPrvega;
 	protected Color barvaDrugega;
 	protected Color barvaPlosce;
 	protected Color barvaRoba;
 	protected Stroke debelinaRoba;
+	
 	
 	public int velikostPlosce = Igra.velikostPlosce;
 	
@@ -51,10 +56,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		
 	}
 	
-	public void pripraviIgro(Igra igra) {
-		this.igra = igra;
-		repaint();
-	}	
+
 	
 	private double sirinaKvadrata() {
 		return Math.min(getWidth(), getHeight()) / (velikostPlosce + 4); }

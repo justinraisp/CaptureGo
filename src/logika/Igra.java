@@ -1,3 +1,4 @@
+package logika;
 
 public class Igra {
 	
@@ -10,6 +11,7 @@ public class Igra {
 	//boolean odigraj(Poteza poteza). Metoda naj vrne true, če je poteza možna,
 	//sicer pa false. Uporabite razred Poteza za 
 	//koordinate od Poteza(0,0) (levo zgoraj) do Poteza(8,8) (desno spodaj).
+	
 	
 }
    

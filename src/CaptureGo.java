@@ -1,5 +1,6 @@
+import gui.Okno;
 
-public class Zagon {
+public class CaptureGo {
 
 	public static void main(String[] args) {
 		

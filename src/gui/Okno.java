@@ -1,3 +1,5 @@
+package gui;
+
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -137,5 +139,4 @@ public class Okno extends JFrame implements ActionListener{
 		}
 	}
 	
-
 
