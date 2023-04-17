@@ -2,16 +2,17 @@ package gui;
 import java.awt.Color;
 import java.util.Set;
 
+import logika.Koordinate;
+
 public class Zeton {
 
-	protected double x;
-	protected double y;
 	protected Color barva;
-	protected Set<Zeton> sosedi;
+	protected Koordinate koordinate;
+	//protected Set<Zeton> sosedi;
 	
-	public Zeton(Color barva) {
+	public Zeton(Color barva, Koordinate koordinate) {
 		this.barva = barva;
-		x = y = -1;
+		this.koordinate = koordinate;
 	}
 
 }

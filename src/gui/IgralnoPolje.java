@@ -2,6 +2,8 @@ package gui;
 
 
 import logika.Igra;
+import logika.Koordinate;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -13,6 +15,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -23,7 +28,7 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionListener, KeyListener{
 	
-	protected Set<Zeton> zetoni;
+	protected Graf graf;
 	
 	protected Color barvaPrvega;
 	protected Color barvaDrugega;
@@ -31,6 +36,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	protected Color barvaRoba;
 	protected Stroke debelinaRoba;
 	protected double polmer;
+	protected double premer;
 	
 	private int klikX;
 	private int klikY;
@@ -43,6 +49,10 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	
 	public IgralnoPolje(int sirina, int visina) {
 		super();
+		
+
+		nastaviGraf();
+		
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		setFocusable(true);
@@ -51,6 +61,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		barvaRoba = Color.BLACK;
 		barvaPlosce = Color.WHITE;
 		polmer = 5;
+		premer = 2* polmer;
 		this.setPreferredSize(new Dimension(sirina,visina));
 		this.setBackground(barvaPlosce);
 		addMouseListener(this);
@@ -62,6 +73,11 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		
 	}
 	
+	public void nastaviGraf() {
+		Koordinate koordinate = new Koordinate(1,2);
+		Zeton zeton = new Zeton(barvaPrvega, koordinate);
+		Graf graf = new Graf();
+	}
 
 	
 	private double sirinaKvadrata() {
@@ -81,13 +97,19 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 			g2.drawLine((int)(2 * w), (int)(i * w),
 				   (int)((velikostPlosce + 2) * w), (int)(i * w));
 		}
-		for(Zeton z: polje.zetoni.values()) {
-			g2.fillOval(round(z.x - polmer), round(z.y - polmer), premer, premer);
-			g2.setColor(z.barva);
+		if (graf != null) {
+			for(Zeton z: graf.zetoni) {
+				int x = z.koordinate.x;
+				int y = z.koordinate.y;
+				g2.fillOval(round(x - polmer), round(y - polmer), (int)premer, (int) premer);
+				g2.setColor(z.barva);
+			}
 		}
 	}
 
-
+	private int round(double x) {
+		return(int)(x + 0.5);
+	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -133,7 +155,15 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	public void mouseClicked(MouseEvent e) {
 		int x = klikX = e.getX();
 		int y = klikY = e.getY();
-		
+		Koordinate koordinate = new Koordinate(x,y);
+		Color barva = Color.BLACK;
+		if (graf != null) {
+		graf.dodajZeton(barva, koordinate);
+		}
+		else {
+			graf = new Graf();
+		}
+		repaint();
 	}
 
 
