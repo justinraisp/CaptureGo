@@ -17,18 +17,18 @@ public class Graf {
 	}
 	
 	
-	public Zeton zeton(Color barva, Koordinate koordinate) {
-		Zeton z = new Zeton(barva, koordinate);
-		return z;
-	}
+//	public Zeton zeton(Color barva, Koordinate koordinate) {
+//		Zeton z = new Zeton(barva, koordinate);
+//		return z;
+//	}
 	
-	public void dodajZeton(Color barva, Koordinate koordinate) {
-		if (zetoni != null) {
-		Zeton z = zeton(barva,koordinate);
-		zetoni.add(z);
-		}
-		else {
-			zetoni = (List<Zeton>) zeton(barva,koordinate);
-		}
-	}
+//	public void dodajZeton(Color barva, Koordinate koordinate) {
+//		if (zetoni != null) {
+//		Zeton z = zeton(barva,koordinate);
+//		zetoni.add(z);
+//		}
+//		else {
+//			zetoni = (List<Zeton>) zeton(barva,koordinate);
+//		}
+//	}
 	}
