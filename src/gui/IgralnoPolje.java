@@ -1,7 +1,9 @@
 package gui;
 
 
+
 import logika.*;
+
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -14,6 +16,9 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JPanel;
@@ -24,7 +29,7 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionListener, KeyListener{
 	
-	protected Set<Zeton> zetoni;
+	protected Graf graf;
 	
 	protected Color barvaPrvega;
 	protected Color barvaDrugega;
@@ -32,18 +37,27 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	protected Color barvaRoba;
 	protected Stroke debelinaRoba;
 	protected double polmer;
+	protected double premer;
 	
 	private int klikX;
 	private int klikY;
+	private int stevec = 0;
 	
 	
 	public int velikostPlosce = Igra.velikostPlosce;
 	
+	int presecisceSirina = getWidth() / velikostPlosce;
+	int presecisceVisina = getHeight() / velikostPlosce;
 	
 	private final static double SIRINA_CRTE = 0.08;
 	
 	public IgralnoPolje(int sirina, int visina) {
 		super();
+		
+
+		nastaviGraf();
+		nastaviPolje();
+		
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		setFocusable(true);
@@ -51,7 +65,8 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		barvaDrugega = Color.WHITE;
 		barvaRoba = Color.BLACK;
 		barvaPlosce = Color.WHITE;
-		polmer = 5;
+		polmer = 10;
+		premer = 2* polmer;
 		this.setPreferredSize(new Dimension(sirina,visina));
 		this.setBackground(barvaPlosce);
 		addMouseListener(this);
@@ -63,6 +78,15 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		
 	}
 	
+	public void nastaviGraf() {
+		Graf graf = new Graf();
+	}
+	
+	public Polje nastaviPolje() {
+		Polje polje = new Polje(velikostPlosce);
+		return polje;
+	}
+	Polje polje = nastaviPolje();
 
 	
 	private double sirinaKvadrata() {
@@ -83,14 +107,28 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 			g2.drawLine((int)(2 * w), (int)(i * w),
 				   (int)((velikostPlosce + 2) * w), (int)(i * w));
 		}
-		
-		for(Zeton z: Polje.zetoni.values()) {
-			g2.fillOval(round(z.x - polmer), round(z.y - polmer), premer, premer);
-			g2.setColor(z.barva);
-		}
+
+
+	    for(int i = 0; i <= velikostPlosce; i++) {
+	        for(int j = 0; j <= velikostPlosce; j++) {
+	            int x = (int) ((i+1)*w);
+	            int y = (int) ((j+1)*w);
+	            //nekaj ni kul, ker i=0,1,2 da prav zeton na presecisce, vec pa ne
+	            if (polje.grid[i][j] == Zeton.CRNI) {
+	                g2.setColor(Color.BLACK);
+	                g2.fillOval(round(x - polmer), round(y - polmer), (int)premer, (int) premer);
+	            } else if (polje.grid[i][j] == Zeton.BELI) {
+	                g2.setColor(Color.WHITE);
+	                g2.fillOval(round(x - polmer), round(y - polmer), (int)premer, (int) premer);
+	            }
+				}
+			}
+
 	}
 
-
+	private int round(double x) {
+		return(int)(x + 0.5);
+	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -136,7 +174,22 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	public void mouseClicked(MouseEvent e) {
 		int x = klikX = e.getX();
 		int y = klikY = e.getY();
+		int presecisceSirina = getWidth() / velikostPlosce;
+		int presecisceVisina = getHeight() / velikostPlosce;
+		int gridX = (klikX + presecisceSirina / 2) / presecisceSirina;
+	    int gridY = (klikY + presecisceVisina / 2) / presecisceVisina;
 		
+		Koordinate koordinate = new Koordinate(x,y);
+		Color barva = Color.BLACK;
+		
+//		if (polje.grid != null) {
+			polje.dodajZeton(gridX,gridY, Zeton.CRNI);
+			System.out.print(gridY);
+//		}
+//		else {
+//			polje = new Polje(velikostPlosce);
+//		}
+		repaint();
 	}
 
 

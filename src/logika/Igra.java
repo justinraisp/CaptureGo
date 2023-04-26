@@ -6,7 +6,9 @@ import java.util.List;
 public class Igra {
 	
 	//tu se mora ustvariti nova igra
-	public final static int velikostPlosce = 19;
+	public static int velikostPlosce = 9;
+	
+
 	
 	//mozne poteze
 	
@@ -15,7 +17,7 @@ public class Igra {
 
 	
 	//igralno polje
-	private Polje[][] plosca;
+	private Polje plosca;
 	
 	
 	//igralec, ki je trenutno na potezi
@@ -23,11 +25,13 @@ public class Igra {
 	
 	
 	public Igra() {
-		final int N = velikostPlosce;
-		plosca = new Polje[N][N];
+
+		int N = velikostPlosce;
+		plosca = new Polje(N);
+
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
-				plosca[i][j] = Polje.PRAZNO;
+				plosca.grid[i][j] = null;
 			}
 		}
 		naPotezi = Igralec.ČRNI;
@@ -38,7 +42,7 @@ public class Igra {
 		return naPotezi;
 	}
 	
-	public Polje[][] getPlosca () {
+	public Polje getPlosca () {
 		return plosca;
 	}
 	
@@ -48,8 +52,10 @@ public class Igra {
 		LinkedList<Koordinate> prostaPolja = new LinkedList<Koordinate>();
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
-				if (plosca[i][j] == Polje.PRAZNO) {
+
+				if (plosca.grid[i][j] == null) {
 					prostaPolja.add(new Koordinate(i, j));
+
 				}
 			}
 		}
@@ -59,8 +65,6 @@ public class Igra {
 	//boolean odigraj(Poteza poteza). Metoda naj vrne true, če je poteza možna,
 	//sicer pa false. Uporabite razred Poteza za 
 	//koordinate od Poteza(0,0) (levo zgoraj) do Poteza(8,8) (desno spodaj).
-	
-	
 	
 	
 }
