@@ -54,9 +54,8 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	public IgralnoPolje(int sirina, int visina) {
 		super();
 		
-
+		Polje polje = nastaviPolje(velikostPlosce);
 		nastaviGraf();
-		nastaviPolje();
 		
 		addMouseMotionListener(this);
 		addKeyListener(this);
@@ -82,37 +81,41 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		Graf graf = new Graf();
 	}
 	
-	public Polje nastaviPolje() {
+	public Polje nastaviPolje(int velikostPlosce) {
 		Polje polje = new Polje(velikostPlosce);
 		return polje;
 	}
-	Polje polje = nastaviPolje();
+	Polje polje = nastaviPolje(velikostPlosce);
 
-	
+	//polovica sirine kvadrata
 	private double sirinaKvadrata() {
-		return Math.min(getWidth(), getHeight()) / (velikostPlosce + 4); }
+		return (Math.min(getWidth(), getHeight())- 40) / (velikostPlosce); }
+	
+	
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
 		double w = sirinaKvadrata();
-		
+		double odmikSirina = (getWidth() - (velikostPlosce * w))/2;
+		double odmikVisina = (getHeight() - (velikostPlosce * w))/2;
+		double polovica = sirinaKvadrata() / 2;
 		g2.setColor(barvaRoba);
 		g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
 		
-		for (int i = 2; i < velikostPlosce + 3; i++) {
-			g2.drawLine((int)(i * w),(int)(2 * w),
-					(int)(i * w), (int)((velikostPlosce + 2) * w));
-			g2.drawLine((int)(2 * w), (int)(i * w),
-				   (int)((velikostPlosce + 2) * w), (int)(i * w));
+		for (int i = 0; i < velikostPlosce; i++) {
+			g2.drawLine((int)(i * w + odmikSirina + polovica ),(int)(odmikVisina + polovica),
+					(int)(i * w + odmikSirina + polovica ), (int)(velikostPlosce * w + odmikVisina - polovica));
 		}
-
-
-	    for(int i = 0; i <= velikostPlosce; i++) {
-	        for(int j = 0; j <= velikostPlosce; j++) {
-	            int x = (int) ((i+1)*w);
-	            int y = (int) ((j+1)*w);
+		for (int j = 0; j < velikostPlosce +1; j++) {
+			g2.drawLine((int)(odmikSirina + polovica), (int)(j * w + odmikVisina - polovica),
+				   (int)((velikostPlosce-1) * w+ odmikSirina + polovica ), (int)(j * w + odmikVisina - polovica));
+		}
+	    for(int i = 0; i < velikostPlosce; i++) {
+	        for(int j = 0; j < velikostPlosce; j++) {
+	            int x = (int) ((i)*w);
+	            int y = (int) ((j)*w);
 	            //nekaj ni kul, ker i=0,1,2 da prav zeton na presecisce, vec pa ne
 	            if (polje.grid[i][j] == Zeton.CRNI) {
 	                g2.setColor(Color.BLACK);
@@ -174,8 +177,8 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	public void mouseClicked(MouseEvent e) {
 		int x = klikX = e.getX();
 		int y = klikY = e.getY();
-		int presecisceSirina = getWidth() / velikostPlosce;
-		int presecisceVisina = getHeight() / velikostPlosce;
+		int presecisceSirina = getWidth() / (velikostPlosce+4);
+		int presecisceVisina = getHeight() / (velikostPlosce+4);
 		int gridX = (klikX + presecisceSirina / 2) / presecisceSirina;
 	    int gridY = (klikY + presecisceVisina / 2) / presecisceVisina;
 		
@@ -184,6 +187,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		
 //		if (polje.grid != null) {
 			polje.dodajZeton(gridX,gridY, Zeton.CRNI);
+			System.out.print(gridX);
 			System.out.print(gridY);
 //		}
 //		else {

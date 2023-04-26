@@ -17,6 +17,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import logika.Igra;
+
 @SuppressWarnings("serial")
 public class Okno extends JFrame implements ActionListener{
 
@@ -133,6 +135,7 @@ public class Okno extends JFrame implements ActionListener{
 			String velikostPlosce = JOptionPane.showInputDialog(this, "Velikost plošče:");
 			if (velikostPlosce != null && velikostPlosce.matches("\\d+")) {
 				polje.velikostPlosce =Integer.parseInt(velikostPlosce);
+				
 				repaint();
 			}
 		}
