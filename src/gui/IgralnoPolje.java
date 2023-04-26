@@ -1,7 +1,8 @@
 package gui;
 
 
-import logika.Igra;
+import logika.*;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -75,13 +76,15 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		
 		g2.setColor(barvaRoba);
 		g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
+		
 		for (int i = 2; i < velikostPlosce + 3; i++) {
 			g2.drawLine((int)(i * w),(int)(2 * w),
 					(int)(i * w), (int)((velikostPlosce + 2) * w));
 			g2.drawLine((int)(2 * w), (int)(i * w),
 				   (int)((velikostPlosce + 2) * w), (int)(i * w));
 		}
-		for(Zeton z: polje.zetoni.values()) {
+		
+		for(Zeton z: Polje.zetoni.values()) {
 			g2.fillOval(round(z.x - polmer), round(z.y - polmer), premer, premer);
 			g2.setColor(z.barva);
 		}

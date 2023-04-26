@@ -23,7 +23,7 @@ public class Igra {
 	
 	
 	public Igra() {
-		int N = velikostPlosce;
+		final int N = velikostPlosce;
 		plosca = new Polje[N][N];
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
@@ -43,17 +43,17 @@ public class Igra {
 	}
 	
 	
-	public List<Koordinate> poteze() {
-		int N = velikostPlosce;
-		LinkedList<Koordinate> ps = new LinkedList<Koordinate>();
+	public List<Koordinate> moznePoteze() {
+		final int N = velikostPlosce;
+		LinkedList<Koordinate> prostaPolja = new LinkedList<Koordinate>();
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				if (plosca[i][j] == Polje.PRAZNO) {
-					ps.add(new Koordinate(i, j));
+					prostaPolja.add(new Koordinate(i, j));
 				}
 			}
 		}
-		return ps;
+		return prostaPolja;
 	}
 
 	//boolean odigraj(Poteza poteza). Metoda naj vrne true, če je poteza možna,
