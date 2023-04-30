@@ -108,7 +108,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 			g2.drawLine((int)(i * w + odmikSirina + polovica ),(int)(odmikVisina + polovica),
 					(int)(i * w + odmikSirina + polovica ), (int)(velikostPlosce * w + odmikVisina - polovica));
 		}
-		for (int j = 0; j < velikostPlosce +1; j++) {
+		for (int j = 1; j < velikostPlosce +1 ; j++) {
 			g2.drawLine((int)(odmikSirina + polovica), (int)(j * w + odmikVisina - polovica),
 				   (int)((velikostPlosce-1) * w+ odmikSirina + polovica ), (int)(j * w + odmikVisina - polovica));
 		}
@@ -116,7 +116,6 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	        for(int j = 0; j < velikostPlosce; j++) {
 	            int x = (int) ((i)*w);
 	            int y = (int) ((j)*w);
-	            //nekaj ni kul, ker i=0,1,2 da prav zeton na presecisce, vec pa ne
 	            if (polje.grid[i][j] == Zeton.CRNI) {
 	                g2.setColor(Color.BLACK);
 	                g2.fillOval(round(x - polmer), round(y - polmer), (int)premer, (int) premer);
