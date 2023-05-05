@@ -31,8 +31,6 @@ import javax.swing.JPanel;
 @SuppressWarnings("serial")
 public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionListener, KeyListener{
 	
-	protected Graf graf;
-	
 	protected Color barvaPrvega;
 	protected Color barvaDrugega;
 	protected Color barvaPlosce;
@@ -41,17 +39,15 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	protected double polmer;
 	protected double premer;
 	public int velikostPlosce = Igra.velikostPlosce;
-	private int klikX;
-	private int klikY;
 	private int stevec = 0;
+	protected Polje polje;
 	
 	private final static double SIRINA_CRTE = 0.08;
 	
 	public IgralnoPolje(int sirina, int visina) {
 		super();
 		
-		Polje polje = nastaviPolje(velikostPlosce);
-		nastaviGraf();
+		nastaviPolje(velikostPlosce);
 		
 		addMouseMotionListener(this);
 		addKeyListener(this);
@@ -70,15 +66,12 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		
 	}
 
-	public void nastaviGraf() {
-		Graf graf = new Graf();
+	
+	public void nastaviPolje(int velikostPlosce) {
+		polje = new Polje(velikostPlosce);
+		repaint();
 	}
 	
-	public Polje nastaviPolje(int velikostPlosce) {
-		Polje polje = new Polje(velikostPlosce);
-		return polje;
-	}
-	Polje polje = nastaviPolje(velikostPlosce);
 
 	//polovica sirine kvadrata
 	private double sirinaKvadrata() {
@@ -164,7 +157,6 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	            }
 	        }
 	    }
-        System.out.print(presecisca);
 	    return presecisca;
 	}
 
@@ -223,7 +215,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
         for (Point presecisce : presecisca) {
             double distance = clickedPoint.distance(presecisce);
             // Draw a filled oval at the intersection point
-            if (distance < sirinaKvadrata() / 2) {
+            if (distance < polovica) {
 	            int x = (int) (1 + (presecisce.x -odmikSirina) / w);
 	            int y = (int) (1 + (presecisce.y -odmikVisina) / w);
 	            if(!polje.vsebujeZeton(x,y) && (stevec % 2 == 0)) {
@@ -239,27 +231,6 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
         repaint();
     }
 	
-//	public void mouseClicked(MouseEvent e) {
-//		int x = klikX = e.getX();
-//		int y = klikY = e.getY();
-//		int presecisceSirina = getWidth() / (velikostPlosce+4);
-//		int presecisceVisina = getHeight() / (velikostPlosce+4);
-//		int gridX = (klikX + presecisceSirina / 2) / presecisceSirina;
-//	    int gridY = (klikY + presecisceVisina / 2) / presecisceVisina;
-		
-//		Koordinate koordinate = new Koordinate(x,y);
-//		Color barva = Color.BLACK;
-		
-//		if (polje.grid != null) {
-//			polje.dodajZeton(gridX,gridY, Zeton.CRNI);
-//			System.out.print(gridX);
-//			System.out.print(gridY);
-//		}
-//		else {
-//			polje = new Polje(velikostPlosce);
-//		}
-//		repaint();
-//	}
 
 
 

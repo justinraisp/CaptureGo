@@ -94,8 +94,7 @@ public class Okno extends JFrame implements ActionListener{
 			int izbira = dialog.showOpenDialog(this);
 			if (izbira == JFileChooser.APPROVE_OPTION) {
 				String ime = dialog.getSelectedFile().getPath();
-				//Graf graf = Graf.preberi(ime);
-				//polje.nastaviGraf(graf);
+
 			}
 		}
 		else if (objekt == menuShrani) {
@@ -133,13 +132,13 @@ public class Okno extends JFrame implements ActionListener{
 		}
 		else if (objekt == menuVelikostPlosce) {
 			String velikostPlosce = JOptionPane.showInputDialog(this, "Velikost plošče:");
-			if (velikostPlosce != null && velikostPlosce.matches("\\d+")) {
+			if (velikostPlosce != null && velikostPlosce.matches("([2-9]|1[0-9])")) {
 				polje.velikostPlosce =Integer.parseInt(velikostPlosce);
-				
+				polje.nastaviPolje(Integer.parseInt(velikostPlosce));
 				repaint();
 			}
 		}
-		}
+	}
 	}
 	
 
