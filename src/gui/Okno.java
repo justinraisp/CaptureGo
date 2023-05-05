@@ -41,6 +41,7 @@ public class Okno extends JFrame implements ActionListener{
 		setTitle("Capture Go");
 		polje = new IgralnoPolje(800, 800);
 		add(polje);
+		polje.add(IgralnoPolje.naVrsti);
 		
 		JMenuBar menubar = new JMenuBar();
 		setJMenuBar(menubar);

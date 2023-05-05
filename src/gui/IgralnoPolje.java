@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
@@ -39,8 +40,9 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	protected double polmer;
 	protected double premer;
 	public int velikostPlosce = Igra.velikostPlosce;
-	private int stevec = 0;
+	private static int stevec = 0;
 	protected Polje polje;
+	public static JLabel naVrsti = new JLabel("");
 	
 	private final static double SIRINA_CRTE = 0.08;
 	
@@ -48,7 +50,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		super();
 		
 		nastaviPolje(velikostPlosce);
-		
+		napisNaVrsti();
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		setFocusable(true);
@@ -72,6 +74,13 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		repaint();
 	}
 	
+	public static void napisNaVrsti() {
+		if(stevec % 2 == 0) {
+			naVrsti.setText("Na vrsti je prvi igralec");
+		}
+		else naVrsti.setText("Na vrsti je drugi igralec");
+	}
+	
 
 	//polovica sirine kvadrata
 	private double sirinaKvadrata() {
@@ -87,14 +96,10 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		polmer = w / 4;
 		premer = 2*polmer;
 		
-		
-		int presecisceSirina = getWidth() / velikostPlosce;
-		int presecisceVisina = getHeight() / velikostPlosce;
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(barvaRoba);
 		g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
-		List<Point> presecisca = izracunajPresecisca();
 		
 		for (int i = 0; i < velikostPlosce; i++) {
 			g2.drawLine((int)(i * w + odmikSirina + polovica ),(int)(odmikVisina + polovica),
@@ -228,6 +233,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	            }
             }
         }
+        napisNaVrsti();
         repaint();
     }
 	
