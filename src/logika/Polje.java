@@ -18,4 +18,10 @@ public class Polje {
     public void dodajZeton(int x, int y, Zeton zeton) {
         grid[x][y] = zeton;
     }
+    
+    public boolean vsebujeZeton(int x, int y) {
+        if(grid[x][y] == null) return false;
+        return true;
+    }
+    
 }

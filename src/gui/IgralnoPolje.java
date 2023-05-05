@@ -10,12 +10,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Stroke;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,16 +40,10 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	protected Stroke debelinaRoba;
 	protected double polmer;
 	protected double premer;
-	
+	public int velikostPlosce = Igra.velikostPlosce;
 	private int klikX;
 	private int klikY;
 	private int stevec = 0;
-	
-	
-	public int velikostPlosce = Igra.velikostPlosce;
-	
-	int presecisceSirina = getWidth() / velikostPlosce;
-	int presecisceVisina = getHeight() / velikostPlosce;
 	
 	private final static double SIRINA_CRTE = 0.08;
 	
@@ -64,19 +60,16 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		barvaDrugega = Color.WHITE;
 		barvaRoba = Color.BLACK;
 		barvaPlosce = Color.WHITE;
-		polmer = 10;
-		premer = 2* polmer;
 		this.setPreferredSize(new Dimension(sirina,visina));
 		this.setBackground(barvaPlosce);
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		setFocusable(true);
-
 		
 		
 	}
-	
+
 	public void nastaviGraf() {
 		Graf graf = new Graf();
 	}
@@ -92,17 +85,23 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		return (Math.min(getWidth(), getHeight())- 40) / (velikostPlosce); }
 	
 	
-	
 	@Override
 	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D)g;
 		double w = sirinaKvadrata();
 		double odmikSirina = (getWidth() - (velikostPlosce * w))/2;
 		double odmikVisina = (getHeight() - (velikostPlosce * w))/2;
-		double polovica = sirinaKvadrata() / 2;
+		double polovica = sirinaKvadrata() / 2;	
+		polmer = w / 4;
+		premer = 2*polmer;
+		
+		
+		int presecisceSirina = getWidth() / velikostPlosce;
+		int presecisceVisina = getHeight() / velikostPlosce;
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D)g;
 		g2.setColor(barvaRoba);
 		g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
+		List<Point> presecisca = izracunajPresecisca();
 		
 		for (int i = 0; i < velikostPlosce; i++) {
 			g2.drawLine((int)(i * w + odmikSirina + polovica ),(int)(odmikVisina + polovica),
@@ -112,21 +111,64 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 			g2.drawLine((int)(odmikSirina + polovica), (int)(j * w + odmikVisina - polovica),
 				   (int)((velikostPlosce-1) * w+ odmikSirina + polovica ), (int)(j * w + odmikVisina - polovica));
 		}
-	    for(int i = 0; i < velikostPlosce; i++) {
-	        for(int j = 0; j < velikostPlosce; j++) {
-	            int x = (int) ((i)*w);
-	            int y = (int) ((j)*w);
+	    for(int i = 0; i < velikostPlosce+1; i++) {
+	        for(int j = 0; j < velikostPlosce+1; j++) {
+	            int x = (int) ((i)*w + odmikSirina);
+	            int y = (int) ((int) ((j)*w) + odmikVisina);
 	            if (polje.grid[i][j] == Zeton.CRNI) {
 	                g2.setColor(Color.BLACK);
-	                g2.fillOval(round(x - polmer), round(y - polmer), (int)premer, (int) premer);
+	                g2.drawOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
+	                g2.fillOval(round(x - 3*polmer), round(y -3* polmer), (int)premer, (int) premer);
 	            } else if (polje.grid[i][j] == Zeton.BELI) {
+	            	g2.setColor(Color.BLACK);
+	                g2.drawOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
 	                g2.setColor(Color.WHITE);
-	                g2.fillOval(round(x - polmer), round(y - polmer), (int)premer, (int) premer);
+	                g2.fillOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
 	            }
 				}
 			}
 
 	}
+	
+	
+	public List<Point> izracunajPresecisca() {
+	    List<Point> presecisca = new ArrayList<Point>();
+	    double w = sirinaKvadrata();
+	    double odmikSirina = (getWidth() - (velikostPlosce * w)) / 2;
+	    double odmikVisina = (getHeight() - (velikostPlosce * w)) / 2;
+	    double polovica = sirinaKvadrata() / 2;
+	    int presecisceSirina = getWidth() / velikostPlosce;
+	    int presecisceVisina = getHeight() / velikostPlosce;
+
+	    // skozi vse vertikalne crte
+	    for (int i = 0; i < velikostPlosce; i++) {
+	        int x1 = (int) (i * w + odmikSirina + polovica);
+	        int y1 = (int) (odmikVisina + polovica);
+	        int x2 = x1;
+	        int y2 = (int) (velikostPlosce * w + odmikVisina - polovica);
+
+	        // skozi vse horizontalne crte
+	        for (int j = 1; j < velikostPlosce + 1; j++) {
+	            int x3 = (int) (odmikSirina + polovica);
+	            int y3 = (int) (j * w + odmikVisina - polovica);
+	            int x4 = (int) ((velikostPlosce - 1) * w + odmikSirina + polovica);
+	            int y4 = y3;
+
+	            // Izracunamo presecisca dveh crt
+	            double d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4); //ce je det = 0 se ne sekata
+	            if (d != 0) {
+	                double xi = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / d;
+	                double yi = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / d;
+	                Point presecisce = new Point((int) xi, (int) yi);
+	                presecisca.add(presecisce);
+	            }
+	        }
+	    }
+        System.out.print(presecisca);
+	    return presecisca;
+	}
+
+	
 
 	private int round(double x) {
 		return(int)(x + 0.5);
@@ -170,30 +212,54 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		
 	}
 
-
-
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		int x = klikX = e.getX();
-		int y = klikY = e.getY();
-		int presecisceSirina = getWidth() / (velikostPlosce+4);
-		int presecisceVisina = getHeight() / (velikostPlosce+4);
-		int gridX = (klikX + presecisceSirina / 2) / presecisceSirina;
-	    int gridY = (klikY + presecisceVisina / 2) / presecisceVisina;
+    public void mouseClicked(MouseEvent e) {
+		double w = sirinaKvadrata();
+		double odmikSirina = (getWidth() - (velikostPlosce * w))/2;
+		double odmikVisina = (getHeight() - (velikostPlosce * w))/2;
+		double polovica = sirinaKvadrata() / 2;	
+		List<Point> presecisca = izracunajPresecisca();
+        Point clickedPoint = e.getPoint();
+        for (Point presecisce : presecisca) {
+            double distance = clickedPoint.distance(presecisce);
+            // Draw a filled oval at the intersection point
+            if (distance < sirinaKvadrata() / 2) {
+	            int x = (int) (1 + (presecisce.x -odmikSirina) / w);
+	            int y = (int) (1 + (presecisce.y -odmikVisina) / w);
+	            if(!polje.vsebujeZeton(x,y) && (stevec % 2 == 0)) {
+	            	polje.dodajZeton(x,y, Zeton.CRNI);
+	            	stevec += 1;
+	            }
+	            if(!polje.vsebujeZeton(x,y) && (stevec % 2 != 0)) {
+	            	polje.dodajZeton(x,y, Zeton.BELI);
+	            	stevec += 1;
+	            }
+            }
+        }
+        repaint();
+    }
+	
+//	public void mouseClicked(MouseEvent e) {
+//		int x = klikX = e.getX();
+//		int y = klikY = e.getY();
+//		int presecisceSirina = getWidth() / (velikostPlosce+4);
+//		int presecisceVisina = getHeight() / (velikostPlosce+4);
+//		int gridX = (klikX + presecisceSirina / 2) / presecisceSirina;
+//	    int gridY = (klikY + presecisceVisina / 2) / presecisceVisina;
 		
-		Koordinate koordinate = new Koordinate(x,y);
-		Color barva = Color.BLACK;
+//		Koordinate koordinate = new Koordinate(x,y);
+//		Color barva = Color.BLACK;
 		
 //		if (polje.grid != null) {
-			polje.dodajZeton(gridX,gridY, Zeton.CRNI);
-			System.out.print(gridX);
-			System.out.print(gridY);
+//			polje.dodajZeton(gridX,gridY, Zeton.CRNI);
+//			System.out.print(gridX);
+//			System.out.print(gridY);
 //		}
 //		else {
 //			polje = new Polje(velikostPlosce);
 //		}
-		repaint();
-	}
+//		repaint();
+//	}
 
 
 
