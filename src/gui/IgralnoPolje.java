@@ -116,11 +116,13 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	            if (polje.grid[i][j] == Zeton.CRNI) {
 	                g2.setColor(Color.BLACK);
 	                g2.drawOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
+	                if(polje.isCaptured(i, j)) g2.setColor(Color.RED);
 	                g2.fillOval(round(x - 3*polmer), round(y -3* polmer), (int)premer, (int) premer);
 	            } else if (polje.grid[i][j] == Zeton.BELI) {
 	            	g2.setColor(Color.BLACK);
 	                g2.drawOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
 	                g2.setColor(Color.WHITE);
+	                if(polje.isCaptured(i, j)) g2.setColor(Color.RED);
 	                g2.fillOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
 	            }
 				}
@@ -235,7 +237,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
         }
         napisNaVrsti();
         repaint();
-    }
+   }
 	
 
 
