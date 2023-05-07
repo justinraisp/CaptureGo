@@ -40,7 +40,9 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	protected double polmer;
 	protected double premer;
 	public int velikostPlosce = Igra.velikostPlosce;
-	private static int stevec = 0;
+	public Igralec naPotezi = Igra.naPotezi;
+	public static Stanje stanje = Igra.stanje;
+	private static int steviloPotez = 0;
 	protected Polje polje;
 	public static JLabel naVrsti = new JLabel("");
 	
@@ -75,10 +77,18 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	}
 	
 	public static void napisNaVrsti() {
-		if(stevec % 2 == 0) {
-			naVrsti.setText("Na vrsti je prvi igralec");
+		if(stanje == Stanje.ZMAGA_BELI) { 
+			naVrsti.setText("Zmagal je drugi igralec!");
 		}
-		else naVrsti.setText("Na vrsti je drugi igralec");
+		else if(stanje == Stanje.ZMAGA_CRNI) { 
+			naVrsti.setText("Zmagal je prvi igralec!");
+		}
+		else {
+			if(steviloPotez % 2 == 0) {
+				naVrsti.setText("Na vrsti je prvi igralec");
+			}
+			else naVrsti.setText("Na vrsti je drugi igralec");
+		}
 	}
 	
 
@@ -225,13 +235,13 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
             if (distance < polovica) {
 	            int x = (int) (1 + (presecisce.x -odmikSirina) / w);
 	            int y = (int) (1 + (presecisce.y -odmikVisina) / w);
-	            if(!polje.vsebujeZeton(x,y) && (stevec % 2 == 0)) {
+	            if(!polje.vsebujeZeton(x,y) && (steviloPotez % 2 == 0)) {
 	            	polje.dodajZeton(x,y, Zeton.CRNI);
-	            	stevec += 1;
+	            	steviloPotez += 1;
 	            }
-	            if(!polje.vsebujeZeton(x,y) && (stevec % 2 != 0)) {
+	            if(!polje.vsebujeZeton(x,y) && (steviloPotez % 2 != 0)) {
 	            	polje.dodajZeton(x,y, Zeton.BELI);
-	            	stevec += 1;
+	            	steviloPotez += 1;
 	            }
             }
         }

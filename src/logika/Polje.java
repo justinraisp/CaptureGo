@@ -1,6 +1,7 @@
 package logika;
 
 import java.awt.Point;
+import logika.Stanje;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -75,7 +76,7 @@ public class Polje {
             if (p.y > 1 && grid[p.x][p.y-1] == null  ) return false;
             if (p.y < size && grid[p.x][p.y+1] == null  ) return false;
         }
-
+        
         // ce pridemo do konca je true
         return true;
     }
