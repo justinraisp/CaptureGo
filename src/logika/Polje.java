@@ -43,7 +43,7 @@ public class Polje {
 
         while (!vrsta.isEmpty()) {
             Point p = vrsta.poll();
-
+            System.out.println(p.y);
             // pogledamo ce na preseciscu nasprotnik ali prazno polje
             if (grid[p.x][p.y] != igralec) {
                 if (grid[p.x][p.y] == null) {
@@ -61,18 +61,19 @@ public class Polje {
             obiskane.add(p);
 
             // dodamo sosednja presecisca v vrsto 
-            if (p.x > 0) vrsta.add(new Point(p.x-1, p.y));
-            if (p.x < size-1) vrsta.add(new Point(p.x+1, p.y));
-            if (p.y > 0) vrsta.add(new Point(p.x, p.y-1));
-            if (p.y < size-1) vrsta.add(new Point(p.x, p.y+1));
+            if (p.x > 1) vrsta.add(new Point(p.x-1, p.y));
+            if (p.x < size) vrsta.add(new Point(p.x+1, p.y));
+            if (p.y > 1) vrsta.add(new Point(p.x, p.y-1));
+            if (p.y < size) vrsta.add(new Point(p.x, p.y+1));
+            
         }
 
         // pogledamo ce so vse okoli nasprotnikovi zetoni
         for (Point p : obiskane) {System.out.print(p.x);
-            if (p.x > 0 && grid[p.x-1][p.y] == null ) return false;
-            if (p.x < size-1 && grid[p.x+1][p.y] == null ) return false;
-            if (p.y > 0 && grid[p.x][p.y-1] == null  ) return false;
-            if (p.y < size-1 && grid[p.x][p.y+1] == null  ) return false;
+            if ((p.x > 1 && grid[p.x-1][p.y] == null)) return false;
+            if (p.x < size && grid[p.x+1][p.y] == null ) return false;
+            if (p.y > 1 && grid[p.x][p.y-1] == null  ) return false;
+            if (p.y < size && grid[p.x][p.y+1] == null  ) return false;
         }
 
         // ce pridemo do konca je true
