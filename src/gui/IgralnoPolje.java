@@ -41,7 +41,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	protected double premer;
 	public int velikostPlosce = Igra.velikostPlosce;
 	public Igralec naPotezi = Igra.naPotezi;
-	public static Stanje stanje = Igra.stanje;
+	public static Stanje stanje = Stanje.V_TEKU;
 	private static int steviloPotez = 0;
 	protected Polje polje;
 	public static JLabel naVrsti = new JLabel("");
@@ -126,13 +126,13 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	            if (polje.grid[i][j] == Zeton.CRNI) {
 	                g2.setColor(Color.BLACK);
 	                g2.drawOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
-	                if(polje.isCaptured(i, j)) g2.setColor(Color.RED);
+	                if(polje.isCaptured(i, j)) {g2.setColor(Color.RED); stanje = stanje.ZMAGA_BELI; napisNaVrsti();}
 	                g2.fillOval(round(x - 3*polmer), round(y -3* polmer), (int)premer, (int) premer);
 	            } else if (polje.grid[i][j] == Zeton.BELI) {
 	            	g2.setColor(Color.BLACK);
 	                g2.drawOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
 	                g2.setColor(Color.WHITE);
-	                if(polje.isCaptured(i, j)) g2.setColor(Color.RED);
+	                if(polje.isCaptured(i, j)) {g2.setColor(Color.RED); stanje = stanje.ZMAGA_CRNI; napisNaVrsti();}
 	                g2.fillOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
 	            }
 				}
@@ -223,30 +223,32 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 
 	@Override
     public void mouseClicked(MouseEvent e) {
-		double w = sirinaKvadrata();
-		double odmikSirina = (getWidth() - (velikostPlosce * w))/2;
-		double odmikVisina = (getHeight() - (velikostPlosce * w))/2;
-		double polovica = sirinaKvadrata() / 2;	
-		List<Point> presecisca = izracunajPresecisca();
-        Point clickedPoint = e.getPoint();
-        for (Point presecisce : presecisca) {
-            double distance = clickedPoint.distance(presecisce);
-            // Draw a filled oval at the intersection point
-            if (distance < polovica) {
-	            int x = (int) (1 + (presecisce.x -odmikSirina) / w);
-	            int y = (int) (1 + (presecisce.y -odmikVisina) / w);
-	            if(!polje.vsebujeZeton(x,y) && (steviloPotez % 2 == 0)) {
-	            	polje.dodajZeton(x,y, Zeton.CRNI);
-	            	steviloPotez += 1;
-	            }
-	            if(!polje.vsebujeZeton(x,y) && (steviloPotez % 2 != 0)) {
-	            	polje.dodajZeton(x,y, Zeton.BELI);
-	            	steviloPotez += 1;
+		if(stanje == stanje.V_TEKU) {
+			double w = sirinaKvadrata();
+			double odmikSirina = (getWidth() - (velikostPlosce * w))/2;
+			double odmikVisina = (getHeight() - (velikostPlosce * w))/2;
+			double polovica = sirinaKvadrata() / 2;	
+			List<Point> presecisca = izracunajPresecisca();
+	        Point clickedPoint = e.getPoint();
+	        for (Point presecisce : presecisca) {
+	            double distance = clickedPoint.distance(presecisce);
+	            // Draw a filled oval at the intersection point
+	            if (distance < polovica) {
+		            int x = (int) (1 + (presecisce.x -odmikSirina) / w);
+		            int y = (int) (1 + (presecisce.y -odmikVisina) / w);
+		            if(!polje.vsebujeZeton(x,y) && (steviloPotez % 2 == 0)) {
+		            	polje.dodajZeton(x,y, Zeton.CRNI);
+		            	steviloPotez += 1;
+		            }
+		            if(!polje.vsebujeZeton(x,y) && (steviloPotez % 2 != 0)) {
+		            	polje.dodajZeton(x,y, Zeton.BELI);
+		            	steviloPotez += 1;
 	            }
             }
-        }
-        napisNaVrsti();
-        repaint();
+        
+		}
+	        napisNaVrsti();
+	        repaint();    }
    }
 	
 
