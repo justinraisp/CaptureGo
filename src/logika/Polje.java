@@ -1,15 +1,10 @@
 package logika;
 
 import java.awt.Point;
-import logika.Stanje;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.Set;
-
-import gui.Zeton;
 
 public class Polje {
 	private int size;
@@ -44,7 +39,6 @@ public class Polje {
 
         while (!vrsta.isEmpty()) {
             Point p = vrsta.poll();
-            System.out.println(p.y);
             // pogledamo ce na preseciscu nasprotnik ali prazno polje
             if (grid[p.x][p.y] != igralec) {
                 if (grid[p.x][p.y] == null) {

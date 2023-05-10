@@ -42,8 +42,8 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	public int velikostPlosce = Igra.velikostPlosce;
 	public Igralec naPotezi = Igra.naPotezi;
 	public static Stanje stanje = Stanje.V_TEKU;
-	private static int steviloPotez = 0;
-	protected Polje polje;
+	private static int steviloPotez = Igra.steviloPotez;
+	protected Polje polje = Igra.polje;
 	public static JLabel naVrsti = new JLabel("");
 	
 	private final static double SIRINA_CRTE = 0.08;
@@ -51,8 +51,8 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	public IgralnoPolje(int sirina, int visina) {
 		super();
 		
-		nastaviPolje(velikostPlosce);
-		napisNaVrsti();
+		//nastaviPolje(velikostPlosce);
+		napisNaVrsti(steviloPotez);
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		setFocusable(true);
@@ -76,7 +76,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		repaint();
 	}
 	
-	public static void napisNaVrsti() {
+	public static void napisNaVrsti(int steviloPotez) {
 		if(stanje == Stanje.ZMAGA_BELI) { 
 			naVrsti.setText("Zmagal je drugi igralec!");
 		}
@@ -126,13 +126,13 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	            if (polje.grid[i][j] == Zeton.CRNI) {
 	                g2.setColor(Color.BLACK);
 	                g2.drawOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
-	                if(polje.isCaptured(i, j)) {g2.setColor(Color.RED); stanje = stanje.ZMAGA_BELI; napisNaVrsti();}
+	                if(polje.isCaptured(i, j)) {g2.setColor(Color.RED); stanje = stanje.ZMAGA_BELI; napisNaVrsti(steviloPotez);}
 	                g2.fillOval(round(x - 3*polmer), round(y -3* polmer), (int)premer, (int) premer);
 	            } else if (polje.grid[i][j] == Zeton.BELI) {
 	            	g2.setColor(Color.BLACK);
 	                g2.drawOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
 	                g2.setColor(Color.WHITE);
-	                if(polje.isCaptured(i, j)) {g2.setColor(Color.RED); stanje = stanje.ZMAGA_CRNI; napisNaVrsti();}
+	                if(polje.isCaptured(i, j)) {g2.setColor(Color.RED); stanje = stanje.ZMAGA_CRNI; napisNaVrsti(steviloPotez);}
 	                g2.fillOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
 	            }
 				}
@@ -236,18 +236,11 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	            if (distance < polovica) {
 		            int x = (int) (1 + (presecisce.x -odmikSirina) / w);
 		            int y = (int) (1 + (presecisce.y -odmikVisina) / w);
-		            if(!polje.vsebujeZeton(x,y) && (steviloPotez % 2 == 0)) {
-		            	polje.dodajZeton(x,y, Zeton.CRNI);
-		            	steviloPotez += 1;
-		            }
-		            if(!polje.vsebujeZeton(x,y) && (steviloPotez % 2 != 0)) {
-		            	polje.dodajZeton(x,y, Zeton.BELI);
-		            	steviloPotez += 1;
-	            }
+		            Igra.odigraj(x, y);
+		           	//steviloPotez += 1;
             }
-        
 		}
-	        napisNaVrsti();
+	        napisNaVrsti(Igra.steviloPotez);
 	        repaint();    }
    }
 	

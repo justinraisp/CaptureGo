@@ -5,10 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import gui.Zeton;
 import logika.Polje;
 import splosno.Poteza;
-import gui.Zeton;
 
 public class Igra {
 	
@@ -56,11 +54,11 @@ public class Igra {
 	}
 	
 	
-	public List<Koordinate> moznePoteze() {
+	public static List<Koordinate> moznePoteze() {
 		final int N = velikostPlosce;
 		LinkedList<Koordinate> prostaPolja = new LinkedList<Koordinate>();
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
+		for (int i = 1; i < N+1; i++) {
+			for (int j = 1; j < N+1; j++) {
 				if (polje.grid[i][j] == null) {
 					prostaPolja.add(new Koordinate(i, j));
 				}
@@ -90,13 +88,17 @@ public class Igra {
 	            stanje = Stanje.ZMAGA_BELI;
 	        }
 	    }
+		List<Koordinate> poteze = moznePoteze();
+		for (Koordinate p : poteze) {
+		    System.out.println(p.x + " " + p.y);
+		}
 	    return true;
 	}
 	
 	public static boolean jeVeljavnaPoteza(int x, int y) {
 	    // Check if coordinates are valid and the position is empty
 		Zeton igralec = polje.grid[x][y];
-	    if (x < 0 || x >= velikostPlosce || y < 0 || y >= velikostPlosce || polje.grid[x][y] != null) {
+	    if (x < 0 || x >= velikostPlosce+1 || y < 0 || y >= velikostPlosce+1 || polje.grid[x][y] != null) {
 	        return false;
 	    }
 
@@ -111,8 +113,8 @@ public class Igra {
 
 	    // If the move gets the stone captured, return false
 	    if (captured) {
-	        polje.grid[x][y] = null;
-	        return false;
+	        polje.grid[x][y] = igralec;
+	        return true;
 	    }
 
 	    // If the move is legal, return true
