@@ -12,4 +12,14 @@ public class Koordinate {
 	public Koordinate dobiKoordinate(Koordinate koordinate) {
 		return koordinate;
 	}
+
+	public int getX(){
+		return x;
+		
+	}
+	
+	public int getY() {
+		return y;
+		
+	}
 }

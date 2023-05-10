@@ -1,5 +1,8 @@
 package logika;
 
+import logika.Zeton;
+
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +52,18 @@ public class Igra {
 		return naPotezi;
 	}
 	
+	public boolean aktivna(Stanje stanje) {
+		if (stanje == Stanje.V_TEKU) return true;
+		else {
+			return false;
+		}
+	}
+	
+	public Stanje dobiStanje() {
+		return stanje;
+		
+	}
+	
 	public Polje getPlosca () {
 		return polje;
 	}
@@ -67,8 +82,10 @@ public class Igra {
 		return prostaPolja;
 	}
 	
-	public static boolean odigraj(int x, int y) {
+	public static boolean odigraj(Poteza poteza) {
 		Zeton zeton;
+		int x = poteza.x();
+		int y = poteza.y();
 		if(steviloPotez % 2 == 0)  zeton = Zeton.CRNI;
 		else zeton = Zeton.BELI;
 	    // Preverimo, če je poteza veljavna
@@ -94,6 +111,8 @@ public class Igra {
 		}
 	    return true;
 	}
+	
+	
 	
 	public static boolean jeVeljavnaPoteza(int x, int y) {
 	    // Check if coordinates are valid and the position is empty
@@ -138,6 +157,29 @@ public class Igra {
 	    
 	    return false;
 	}
+	
+	public void odigrajNakljucnoPotezo() {
+	    ArrayList<Koordinate> prostaPolja = (ArrayList<Koordinate>) moznePoteze();
+		
+	    
+	    // Check if there are any possible moves
+	    if (prostaPolja.isEmpty()) {
+	        return; // No possible moves, exit the method
+	    }
+	    
+	    // Generate a random index within the range of available moves
+	    int randomIndex = (int) (Math.random() * prostaPolja.size());
+	    
+	    // Get the randomly selected move
+	    Koordinate nakljucnaPoteza = prostaPolja.get(randomIndex);
+	    
+	    int a = nakljucnaPoteza.x;
+	    int b = nakljucnaPoteza.y;
+	    Poteza updated = new Poteza(a,b);
+	    // Play the randomly selected move
+	    odigraj(updated);
+	}
+
 
 
 

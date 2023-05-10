@@ -1,4 +1,6 @@
 package splosno;
 
-public record Poteza (int x, int y) {}
+public record Poteza (int x, int y) {
+	
+}
 	

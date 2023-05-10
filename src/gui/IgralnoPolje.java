@@ -3,7 +3,7 @@ package gui;
 
 
 import logika.*;
-
+import splosno.Poteza;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -36,6 +36,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	protected Color barvaDrugega;
 	protected Color barvaPlosce;
 	protected Color barvaRoba;
+	protected Color barvaBorda;
 	protected Stroke debelinaRoba;
 	protected double polmer;
 	protected double premer;
@@ -103,13 +104,20 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		double odmikSirina = (getWidth() - (velikostPlosce * w))/2;
 		double odmikVisina = (getHeight() - (velikostPlosce * w))/2;
 		double polovica = sirinaKvadrata() / 2;	
+		Color barvaBorda = new Color(237, 204, 153);
 		polmer = w / 4;
 		premer = 2*polmer;
 		
 		super.paintComponent(g);
 		Graphics2D g2 = (Graphics2D)g;
+		
+		g2.setColor(barvaBorda); // Set the color of the background
+	    g2.fillRect((int)odmikSirina, (int)odmikVisina, (int)(velikostPlosce * w), (int)(velikostPlosce * w));
+		
+		
 		g2.setColor(barvaRoba);
 		g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
+		
 		
 		for (int i = 0; i < velikostPlosce; i++) {
 			g2.drawLine((int)(i * w + odmikSirina + polovica ),(int)(odmikVisina + polovica),
@@ -236,7 +244,8 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	            if (distance < polovica) {
 		            int x = (int) (1 + (presecisce.x -odmikSirina) / w);
 		            int y = (int) (1 + (presecisce.y -odmikVisina) / w);
-		            Igra.odigraj(x, y);
+		            Poteza updated = new Poteza(x, y);
+		            Igra.odigraj(updated);
 		           	//steviloPotez += 1;
             }
 		}
