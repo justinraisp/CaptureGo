@@ -12,25 +12,29 @@ public class Inteligenca extends KdoIgra {
 	}
 	
 	
-	private Poteza izberiPotezo(Igra igra) {
+	public Poteza izberiPotezo(Igra igra) {
 		long zacetek = System.currentTimeMillis();
 	    Poteza najboljsaPoteza = null;
 	    double najboljseOcenjevanje = Double.NEGATIVE_INFINITY;
         
 	    // Perform Monte Carlo simulations
 	    int stSimulacij = 1000; // Number of simulations to perform
-	    for (Koordinate poteza : Igra.moznePoteze()) {
+	    for (Poteza poteza : Igra.moznePoteze()) {
 	        double ocenjevanje = 0;
 
-	        // Perform simulations for each move
+	        // simulacije
+	        
+	        int[] steviloZmag = new int[2];
+	        int beli = 0;
+	        int crni = 0;
 	        for (int i = 0; i < stSimulacij; i++) {
-	        	int beli = 0;
-	        	int crni = 0;
 	        	
-	            Igra kopijaIgre = new Igra(); // Create a copy of the game
+	        	
+	        	
+	            Igra kopijaIgre = new Igra(); // ustvari kopijo igre
 	            Stanje stanje = kopijaIgre.dobiStanje();
 
-	            // Play random moves until the end of the game
+	            // Igraj random poteze do konca igree
 	            while (!kopijaIgre.aktivna(stanje)) {
 	                kopijaIgre.odigrajNakljucnoPotezo();
 	            }
@@ -40,14 +44,16 @@ public class Inteligenca extends KdoIgra {
 	            if (stanje == Stanje.ZMAGA_BELI) ++beli;
 	            
 	            
-	           
-	            
-	            
 	            
 	            // Evaluate the outcome of the game
-	            int rezultat = kopijaIgre.steviloZmag[];
+	            int rezultat = steviloZmag[igra.naPotezi().nasprotnik().ordinal()];
 	            ocenjevanje += rezultat;
+
 	        }
+	        
+	        steviloZmag[Igralec.ČRNI.ordinal()] += crni;
+	        steviloZmag[Igralec.BELI.ordinal()] += beli;
+
 
 	        ocenjevanje /= stSimulacij; // Average the outcomes
 
@@ -65,7 +71,7 @@ public class Inteligenca extends KdoIgra {
 	    return najboljsaPoteza;
 	}
 	
-	private void narediPotezo(Poteza poteza) {
+	public void narediPotezo(Poteza poteza) {
 		// naredi najboljso mozno potezo
 		
 		Igra.odigraj(poteza);

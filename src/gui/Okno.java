@@ -18,6 +18,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import logika.Igra;
+import logika.Igralec;
+import vodja.Vodja;
 
 @SuppressWarnings("serial")
 public class Okno extends JFrame implements ActionListener{
@@ -35,6 +37,8 @@ public class Okno extends JFrame implements ActionListener{
 	private JMenuItem menuOdpri, menuShrani, menuKoncaj;
 	private JMenuItem menuVelikostPlosce;
 	private JMenuItem menuBarvaPrvega, menuBarvaDrugega, menuBarvaRoba;
+	
+	private JLabel naVrsti;
 	
 	public Okno() {
 		super(); // poklciemo konstruktor od jframe
@@ -67,6 +71,8 @@ public class Okno extends JFrame implements ActionListener{
 		menuNastavitve.addSeparator();
 		menuBarvaPrvega = dodajMenuItem(menuNastavitve, "Barva prvega igralca ...");
 		menuBarvaDrugega = dodajMenuItem(menuNastavitve, "Barva drugega igralca ...");
+		
+		naVrsti = new JLabel();
 		
 		
 		
@@ -140,6 +146,29 @@ public class Okno extends JFrame implements ActionListener{
 			}
 		}
 	}
+	public void osveziGUI() {
+		if (Vodja.igra == null) {
+			naVrsti.setText("Igra ni v teku.");
+		}
+		else {
+			switch(Vodja.igra.dobiStanje()) {
+			case V_TEKU: 
+				naVrsti.setText("Na potezi je " + Vodja.igra.naPotezi() + 
+						" - " + Vodja.vrstaIgralca.get(Vodja.igra.naPotezi())); 
+				break;
+			case ZMAGA_BELI: 
+				naVrsti.setText("Zmagal je O - " + 
+						Vodja.vrstaIgralca.get(Igralec.BELI));
+				break;
+			case ZMAGA_CRNI: 
+				naVrsti.setText("Zmagal je X - " + 
+						Vodja.vrstaIgralca.get(Igralec.ČRNI));
+				break;
+			}
+		}
+		repaint();
+	}	
+	
 	}
 	
 

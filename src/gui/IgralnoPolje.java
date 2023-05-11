@@ -4,6 +4,7 @@ package gui;
 
 import logika.*;
 import splosno.Poteza;
+import vodja.Vodja;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -46,6 +47,8 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	private static int steviloPotez = Igra.steviloPotez;
 	protected Polje polje = Igra.polje;
 	public static JLabel naVrsti = new JLabel("");
+	
+	
 	
 	private final static double SIRINA_CRTE = 0.08;
 	
@@ -283,7 +286,6 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		// TODO Auto-generated method stub
 		
 	}
-		
 		
 	
 }	

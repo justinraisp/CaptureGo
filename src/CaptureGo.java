@@ -1,4 +1,5 @@
 import gui.Okno;
+import vodja.Vodja;
 
 public class CaptureGo {
 
@@ -8,6 +9,7 @@ public class CaptureGo {
 		Okno okno = new Okno();
 		okno.pack();
 		okno.setVisible(true);
+		//Vodja.okno = glavno_okno;
 
 	}
 }

@@ -69,13 +69,13 @@ public class Igra {
 	}
 	
 	
-	public static List<Koordinate> moznePoteze() {
+	public static List<Poteza> moznePoteze() {
 		final int N = velikostPlosce;
-		LinkedList<Koordinate> prostaPolja = new LinkedList<Koordinate>();
+		LinkedList<Poteza> prostaPolja = new LinkedList<Poteza>();
 		for (int i = 1; i < N+1; i++) {
 			for (int j = 1; j < N+1; j++) {
 				if (polje.grid[i][j] == null) {
-					prostaPolja.add(new Koordinate(i, j));
+					prostaPolja.add(new Poteza(i, j));
 				}
 			}
 		}
@@ -105,9 +105,9 @@ public class Igra {
 	            stanje = Stanje.ZMAGA_BELI;
 	        }
 	    }
-		List<Koordinate> poteze = moznePoteze();
-		for (Koordinate p : poteze) {
-		    System.out.println(p.x + " " + p.y);
+		List<Poteza> poteze = moznePoteze();
+		for (Poteza p : poteze) {
+		    System.out.println(p.x() + " " + p.y());
 		}
 	    return true;
 	}
@@ -159,7 +159,7 @@ public class Igra {
 	}
 	
 	public void odigrajNakljucnoPotezo() {
-	    ArrayList<Koordinate> prostaPolja = (ArrayList<Koordinate>) moznePoteze();
+	    ArrayList<Poteza> prostaPolja = (ArrayList<Poteza>) moznePoteze();
 		
 	    
 	    // Check if there are any possible moves
@@ -171,10 +171,10 @@ public class Igra {
 	    int randomIndex = (int) (Math.random() * prostaPolja.size());
 	    
 	    // Get the randomly selected move
-	    Koordinate nakljucnaPoteza = prostaPolja.get(randomIndex);
+	    Poteza nakljucnaPoteza = prostaPolja.get(randomIndex);
 	    
-	    int a = nakljucnaPoteza.x;
-	    int b = nakljucnaPoteza.y;
+	    int a = nakljucnaPoteza.x();
+	    int b = nakljucnaPoteza.y();
 	    Poteza updated = new Poteza(a,b);
 	    // Play the randomly selected move
 	    odigraj(updated);
