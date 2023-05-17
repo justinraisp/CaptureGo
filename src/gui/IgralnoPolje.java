@@ -98,6 +98,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	
 	@Override
 	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
 		if(Vodja.igra !=  null) {
 			int w = sirinaKvadrata();
 			int odmikSirina = (getWidth() - (Vodja.igra.velikostPlosce * w))/2;
@@ -244,7 +245,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		            int x = (int) (1 + (presecisce.x -odmikSirina) / w);
 		            int y = (int) (1 + (presecisce.y -odmikVisina) / w);
 		            Poteza updated = new Poteza(x, y);
-		            Vodja.igra.odigraj(updated);
+		            Vodja.igrajClovekovoPotezo(updated);
 		           	//steviloPotez += 1;
             }
 		}

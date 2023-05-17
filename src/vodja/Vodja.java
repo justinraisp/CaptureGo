@@ -27,11 +27,11 @@ public class Vodja {
 		
 	public static void igramoNovoIgro () {
 		igra = new Igra ();
-		//igramo ();
+		igramo ();
 	}
 	
 	public static void igramo () {
-		okno.osveziGUI();
+		//okno.osveziGUI();
 		switch (igra.dobiStanje()) {
 		case ZMAGA_BELI: 
 		case ZMAGA_CRNI:
@@ -48,6 +48,7 @@ public class Vodja {
 				break;
 			}
 		}
+		//okno.osveziGUI();
 	}
 	
 	private static Random random = new Random ();
@@ -59,10 +60,13 @@ public class Vodja {
 		
 	public static void igrajClovekovoPotezo(Poteza poteza) {
 		if (igra.odigraj(poteza)) {
+			igra.odigraj(poteza);
 			clovekNaVrsti = false;
 			igramo ();
 		}
 	}
+	
+	
 
 
 }

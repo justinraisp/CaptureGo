@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.util.EnumMap;
 
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
@@ -20,6 +21,7 @@ import javax.swing.JTextField;
 import logika.Igra;
 import logika.Igralec;
 import vodja.Vodja;
+import vodja.VrstaIgralca;
 
 @SuppressWarnings("serial")
 public class Okno extends JFrame implements ActionListener{
@@ -142,10 +144,36 @@ public class Okno extends JFrame implements ActionListener{
 			if (velikostPlosce != null && velikostPlosce.matches("([2-9]|1[0-9])")) {
 				//polje.velikostPlosce =Integer.parseInt(velikostPlosce);
 				//polje.nastaviPolje(Integer.parseInt(velikostPlosce));
-				//Igra.velikostPlosce =Integer.parseInt(velikostPlosce);
+				Igra.velikostPlosce =Integer.parseInt(velikostPlosce);
 				Vodja.igramoNovoIgro();
 				repaint();
 			}
+		}
+		else if(objekt == igraClovekRacunalnik) {
+			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C); 
+			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
+			Vodja.igramoNovoIgro();
+			repaint();
+		}
+		 else if (e.getSource() == igraRacunalnikClovek) {
+			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R); 
+			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.C);
+			Vodja.igramoNovoIgro();
+			repaint();
+		} else if (e.getSource() == igraClovekClovek) {
+			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C); 
+			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.C);
+			Vodja.igramoNovoIgro();
+			repaint();
+		} else if (e.getSource() == igraRacunalnikRacunalnik) {
+			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R); 
+			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
+			Vodja.igramoNovoIgro();
+			repaint();
 		}
 	}
 	public void osveziGUI() {
@@ -173,4 +201,6 @@ public class Okno extends JFrame implements ActionListener{
 	
 	}
 	
+
+
 
