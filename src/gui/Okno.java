@@ -196,7 +196,7 @@ public class Okno extends JFrame implements ActionListener{
 				break;
 			}
 		}
-		repaint();
+		polje.repaint();
 	}	
 	
 	}

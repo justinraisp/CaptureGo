@@ -20,7 +20,9 @@ public class Inteligenca extends KdoIgra {
         
 	    // Perform Monte Carlo simulations
 	    int stSimulacij = 1000; // Number of simulations to perform
+
 	    for (Poteza poteza : igra.moznePoteze()) {
+
 	        double ocenjevanje = 0;
 
 	        // simulacije

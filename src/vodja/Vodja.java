@@ -31,7 +31,9 @@ public class Vodja {
 	}
 	
 	public static void igramo () {
+
 		//okno.osveziGUI();
+
 		switch (igra.dobiStanje()) {
 		case ZMAGA_BELI: 
 		case ZMAGA_CRNI:
