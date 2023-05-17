@@ -41,11 +41,11 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	protected Stroke debelinaRoba;
 	protected double polmer;
 	protected double premer;
-	public int velikostPlosce = Igra.velikostPlosce;
-	public Igralec naPotezi = Igra.naPotezi;
-	public static Stanje stanje = Stanje.V_TEKU;
-	private static int steviloPotez = Igra.steviloPotez;
-	protected Polje polje = Igra.polje;
+	//public int Vodja.igra.velikostPlosce = Igra.Vodja.igra.velikostPlosce;
+	//public Igralec naPotezi = Igra.naPotezi;
+	//public static Stanje stanje = Stanje.V_TEKU;
+	//private static int steviloPotez = Igra.steviloPotez;
+	//protected Polje polje = Igra.polje;
 	public static JLabel naVrsti = new JLabel("");
 	
 	
@@ -55,8 +55,8 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	public IgralnoPolje(int sirina, int visina) {
 		super();
 		
-		//nastaviPolje(velikostPlosce);
-		napisNaVrsti(steviloPotez);
+		//nastaviPolje(Vodja.igra.velikostPlosce);
+		//napisNaVrsti(Vodja.igra.naPotezi);
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		setFocusable(true);
@@ -75,20 +75,15 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	}
 
 	
-	public void nastaviPolje(int velikostPlosce) {
-		polje = new Polje(velikostPlosce);
-		repaint();
-	}
-	
-	public static void napisNaVrsti(int steviloPotez) {
-		if(stanje == Stanje.ZMAGA_BELI) { 
+	public static void napisNaVrsti(Igralec igralec) {
+		if(Vodja.igra.stanje == Stanje.ZMAGA_BELI) { 
 			naVrsti.setText("Zmagal je drugi igralec!");
 		}
-		else if(stanje == Stanje.ZMAGA_CRNI) { 
+		else if(Vodja.igra.stanje == Stanje.ZMAGA_CRNI) { 
 			naVrsti.setText("Zmagal je prvi igralec!");
 		}
 		else {
-			if(steviloPotez % 2 == 0) {
+			if(igralec == Igralec.ČRNI) {
 				naVrsti.setText("Na vrsti je prvi igralec");
 			}
 			else naVrsti.setText("Na vrsti je drugi igralec");
@@ -97,82 +92,83 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	
 
 	//polovica sirine kvadrata
-	private double sirinaKvadrata() {
-		return (Math.min(getWidth(), getHeight())- 40) / (velikostPlosce); }
+	private int sirinaKvadrata() {
+		return (Math.min(getWidth(), getHeight())- 40) / (Vodja.igra.velikostPlosce); }
 	
 	
 	@Override
 	protected void paintComponent(Graphics g) {
-		double w = sirinaKvadrata();
-		double odmikSirina = (getWidth() - (velikostPlosce * w))/2;
-		double odmikVisina = (getHeight() - (velikostPlosce * w))/2;
-		double polovica = sirinaKvadrata() / 2;	
-		Color barvaBorda = new Color(237, 204, 153);
-		polmer = w / 4;
-		premer = 2*polmer;
-		
-		super.paintComponent(g);
-		Graphics2D g2 = (Graphics2D)g;
-		
-		g2.setColor(barvaBorda); // Set the color of the background
-	    g2.fillRect((int)odmikSirina, (int)odmikVisina, (int)(velikostPlosce * w), (int)(velikostPlosce * w));
-		
-		
-		g2.setColor(barvaRoba);
-		g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
-		
-		
-		for (int i = 0; i < velikostPlosce; i++) {
-			g2.drawLine((int)(i * w + odmikSirina + polovica ),(int)(odmikVisina + polovica),
-					(int)(i * w + odmikSirina + polovica ), (int)(velikostPlosce * w + odmikVisina - polovica));
-		}
-		for (int j = 1; j < velikostPlosce +1 ; j++) {
-			g2.drawLine((int)(odmikSirina + polovica), (int)(j * w + odmikVisina - polovica),
-				   (int)((velikostPlosce-1) * w+ odmikSirina + polovica ), (int)(j * w + odmikVisina - polovica));
-		}
-	    for(int i = 0; i < velikostPlosce+1; i++) {
-	        for(int j = 0; j < velikostPlosce+1; j++) {
-	            int x = (int) ((i)*w + odmikSirina);
-	            int y = (int) ((int) ((j)*w) + odmikVisina);
-	            if (polje.grid[i][j] == Zeton.CRNI) {
-	                g2.setColor(Color.BLACK);
-	                g2.drawOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
-	                if(polje.isCaptured(i, j)) {g2.setColor(Color.RED); stanje = stanje.ZMAGA_BELI; napisNaVrsti(steviloPotez);}
-	                g2.fillOval(round(x - 3*polmer), round(y -3* polmer), (int)premer, (int) premer);
-	            } else if (polje.grid[i][j] == Zeton.BELI) {
-	            	g2.setColor(Color.BLACK);
-	                g2.drawOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
-	                g2.setColor(Color.WHITE);
-	                if(polje.isCaptured(i, j)) {g2.setColor(Color.RED); stanje = stanje.ZMAGA_CRNI; napisNaVrsti(steviloPotez);}
-	                g2.fillOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
-	            }
-				}
+		if(Vodja.igra !=  null) {
+			int w = sirinaKvadrata();
+			int odmikSirina = (getWidth() - (Vodja.igra.velikostPlosce * w))/2;
+			int odmikVisina = (getHeight() - (Vodja.igra.velikostPlosce * w))/2;
+			int polovica = sirinaKvadrata() / 2;	
+			Color barvaBorda = new Color(237, 204, 153);
+			polmer = w / 4;
+			premer = 2*polmer;
+			
+			super.paintComponent(g);
+			Graphics2D g2 = (Graphics2D)g;
+			
+			g2.setColor(barvaBorda); // Set the color of the background
+		    g2.fillRect(odmikSirina, odmikVisina, (Vodja.igra.velikostPlosce* w), (int)(Vodja.igra.velikostPlosce * w));
+			
+			
+			g2.setColor(barvaRoba);
+			g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
+			
+			
+			for (int i = 0; i < Vodja.igra.velikostPlosce; i++) {
+				g2.drawLine((i * w + odmikSirina + polovica ),(int)(odmikVisina + polovica),
+						(int)(i * w + odmikSirina + polovica ), (int)(Vodja.igra.velikostPlosce * w + odmikVisina - polovica));
 			}
-
+			for (int j = 1; j < Vodja.igra.velikostPlosce +1 ; j++) {
+				g2.drawLine((int)(odmikSirina + polovica), (int)(j * w + odmikVisina - polovica),
+					   (int)((Vodja.igra.velikostPlosce-1) * w+ odmikSirina + polovica ), (int)(j * w + odmikVisina - polovica));
+			}
+		    for(int i = 0; i < Vodja.igra.velikostPlosce+1; i++) {
+		        for(int j = 0; j < Vodja.igra.velikostPlosce+1; j++) {
+		            int x = (int) ((i)*w + odmikSirina);
+		            int y = (int) ((int) ((j)*w) + odmikVisina);
+		            if (Vodja.igra.polje.grid[i][j] == Zeton.CRNI) {
+		                g2.setColor(Color.BLACK);
+		                g2.drawOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
+		                if(Vodja.igra.polje.isCaptured(i, j)) {g2.setColor(Color.RED); Vodja.igra.stanje = Stanje.ZMAGA_BELI; napisNaVrsti(Vodja.igra.naPotezi);}
+		                g2.fillOval(round(x - 3*polmer), round(y -3* polmer), (int)premer, (int) premer);
+		            } else if (Vodja.igra.polje.grid[i][j] == Zeton.BELI) {
+		            	g2.setColor(Color.BLACK);
+		                g2.drawOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
+		                g2.setColor(Color.WHITE);
+		                if(Vodja.igra.polje.isCaptured(i, j)) {g2.setColor(Color.RED); Vodja.igra.stanje = Stanje.ZMAGA_CRNI; napisNaVrsti(Vodja.igra.naPotezi);}
+		                g2.fillOval(round(x - 3*polmer), round(y - 3*polmer), (int)premer, (int) premer);
+		            }
+					}
+				}
+		}
 	}
 	
 	
 	public List<Point> izracunajPresecisca() {
 	    List<Point> presecisca = new ArrayList<Point>();
 	    double w = sirinaKvadrata();
-	    double odmikSirina = (getWidth() - (velikostPlosce * w)) / 2;
-	    double odmikVisina = (getHeight() - (velikostPlosce * w)) / 2;
+	    double odmikSirina = (getWidth() - (Vodja.igra.velikostPlosce * w)) / 2;
+	    double odmikVisina = (getHeight() - (Vodja.igra.velikostPlosce * w)) / 2;
 	    double polovica = sirinaKvadrata() / 2;
-	    int presecisceSirina = getWidth() / velikostPlosce;
-	    int presecisceVisina = getHeight() / velikostPlosce;
+	    int presecisceSirina = getWidth() / Vodja.igra.velikostPlosce;
+	    int presecisceVisina = getHeight() / Vodja.igra.velikostPlosce;
 
 	    // skozi vse vertikalne crte
-	    for (int i = 0; i < velikostPlosce; i++) {
+	    for (int i = 0; i < Vodja.igra.velikostPlosce; i++) {
 	        int x1 = (int) (i * w + odmikSirina + polovica);
 	        int y1 = (int) (odmikVisina + polovica);
 	        int x2 = x1;
-	        int y2 = (int) (velikostPlosce * w + odmikVisina - polovica);
+	        int y2 = (int) (Vodja.igra.velikostPlosce * w + odmikVisina - polovica);
 
 	        // skozi vse horizontalne crte
-	        for (int j = 1; j < velikostPlosce + 1; j++) {
+	        for (int j = 1; j < Vodja.igra.velikostPlosce + 1; j++) {
 	            int x3 = (int) (odmikSirina + polovica);
 	            int y3 = (int) (j * w + odmikVisina - polovica);
-	            int x4 = (int) ((velikostPlosce - 1) * w + odmikSirina + polovica);
+	            int x4 = (int) ((Vodja.igra.velikostPlosce - 1) * w + odmikSirina + polovica);
 	            int y4 = y3;
 
 	            // Izracunamo presecisca dveh crt
@@ -234,11 +230,11 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 
 	@Override
     public void mouseClicked(MouseEvent e) {
-		if(stanje == stanje.V_TEKU) {
-			double w = sirinaKvadrata();
-			double odmikSirina = (getWidth() - (velikostPlosce * w))/2;
-			double odmikVisina = (getHeight() - (velikostPlosce * w))/2;
-			double polovica = sirinaKvadrata() / 2;	
+		if(Vodja.igra != null && Vodja.igra.stanje == Stanje.V_TEKU ) {
+			int w = sirinaKvadrata();
+			int odmikSirina = (getWidth() - (Vodja.igra.velikostPlosce * w))/2;
+			int odmikVisina = (getHeight() - (Vodja.igra.velikostPlosce * w))/2;
+			int polovica = sirinaKvadrata() / 2;	
 			List<Point> presecisca = izracunajPresecisca();
 	        Point clickedPoint = e.getPoint();
 	        for (Point presecisce : presecisca) {
@@ -248,11 +244,11 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		            int x = (int) (1 + (presecisce.x -odmikSirina) / w);
 		            int y = (int) (1 + (presecisce.y -odmikVisina) / w);
 		            Poteza updated = new Poteza(x, y);
-		            Igra.odigraj(updated);
+		            Vodja.igra.odigraj(updated);
 		           	//steviloPotez += 1;
             }
 		}
-	        napisNaVrsti(Igra.steviloPotez);
+	        napisNaVrsti(Vodja.igra.naPotezi);
 	        repaint();    }
    }
 	

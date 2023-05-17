@@ -27,7 +27,7 @@ public class Vodja {
 		
 	public static void igramoNovoIgro () {
 		igra = new Igra ();
-		igramo ();
+		//igramo ();
 	}
 	
 	public static void igramo () {

@@ -140,8 +140,10 @@ public class Okno extends JFrame implements ActionListener{
 		else if (objekt == menuVelikostPlosce) {
 			String velikostPlosce = JOptionPane.showInputDialog(this, "Velikost plošče:");
 			if (velikostPlosce != null && velikostPlosce.matches("([2-9]|1[0-9])")) {
-				polje.velikostPlosce =Integer.parseInt(velikostPlosce);
-				polje.nastaviPolje(Integer.parseInt(velikostPlosce));
+				//polje.velikostPlosce =Integer.parseInt(velikostPlosce);
+				//polje.nastaviPolje(Integer.parseInt(velikostPlosce));
+				//Igra.velikostPlosce =Integer.parseInt(velikostPlosce);
+				Vodja.igramoNovoIgro();
 				repaint();
 			}
 		}

@@ -14,7 +14,7 @@ import splosno.Poteza;
 public class Igra {
 	
 	//tu se mora ustvariti nova igra
-	public static int velikostPlosce = 9;
+	public int velikostPlosce = 9;
 	
 	public static int steviloPotez = 0;
 	
@@ -25,14 +25,14 @@ public class Igra {
 
 	
 	//igralno polje
-	public static Polje polje = new Polje(velikostPlosce);
+	public Polje polje = new Polje(velikostPlosce);
 	
 	
 	//igralec, ki je trenutno na potezi
-	public static Igralec naPotezi;
+	public Igralec naPotezi;
 	
 	
-	public static Stanje stanje = Stanje.V_TEKU;
+	public Stanje stanje = Stanje.V_TEKU;
 	
 	public Igra() {
 
@@ -69,7 +69,7 @@ public class Igra {
 	}
 	
 	
-	public static List<Poteza> moznePoteze() {
+	public List<Poteza> moznePoteze() {
 		final int N = velikostPlosce;
 		LinkedList<Poteza> prostaPolja = new LinkedList<Poteza>();
 		for (int i = 1; i < N+1; i++) {
@@ -82,7 +82,7 @@ public class Igra {
 		return prostaPolja;
 	}
 	
-	public static boolean odigraj(Poteza poteza) {
+	public boolean odigraj(Poteza poteza) {
 		Zeton zeton;
 		int x = poteza.x();
 		int y = poteza.y();
@@ -114,7 +114,7 @@ public class Igra {
 	
 	
 	
-	public static boolean jeVeljavnaPoteza(int x, int y) {
+	public boolean jeVeljavnaPoteza(int x, int y) {
 	    // Check if coordinates are valid and the position is empty
 		Zeton igralec = polje.grid[x][y];
 	    if (x < 0 || x >= velikostPlosce+1 || y < 0 || y >= velikostPlosce+1 || polje.grid[x][y] != null) {
@@ -140,7 +140,7 @@ public class Igra {
 	    return true;
 	}
 	
-	public static boolean isKoRuleViolation(int x, int y) {
+	public boolean isKoRuleViolation(int x, int y) {
 	    
 	    // Rule 2: A player cannot play on a point that would cause their own stone to be captured
 	    if (polje.isCaptured(x, y)) {
