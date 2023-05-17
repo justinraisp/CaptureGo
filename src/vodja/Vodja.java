@@ -27,11 +27,11 @@ public class Vodja {
 		
 	public static void igramoNovoIgro () {
 		igra = new Igra ();
-		//igramo ();
+		igramo ();
 	}
 	
 	public static void igramo () {
-		okno.osveziGUI();
+		if(Vodja.okno != null) okno.osveziGUI();
 		switch (igra.dobiStanje()) {
 		case ZMAGA_BELI: 
 		case ZMAGA_CRNI:

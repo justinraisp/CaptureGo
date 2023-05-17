@@ -98,6 +98,7 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 	
 	@Override
 	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
 		if(Vodja.igra !=  null) {
 			int w = sirinaKvadrata();
 			int odmikSirina = (getWidth() - (Vodja.igra.velikostPlosce * w))/2;

@@ -14,31 +14,26 @@ import splosno.Poteza;
 public class Igra {
 	
 	//tu se mora ustvariti nova igra
-	public int velikostPlosce = 9;
-	
-	public static int steviloPotez = 0;
+	public static int velikostPlosce = 9;
 	
 	//mozne poteze
-	
-	//vse vrste
-	private static final List<Vrsta> VRSTE = new LinkedList<Vrsta>();
 
 	
 	//igralno polje
-	public Polje polje = new Polje(velikostPlosce);
+	public Polje polje;
 	
 	
 	//igralec, ki je trenutno na potezi
 	public Igralec naPotezi;
 	
 	
-	public Stanje stanje = Stanje.V_TEKU;
+	public Stanje stanje;
 	
 	public Igra() {
 
 		int N = velikostPlosce;
 		polje = new Polje(N);
-		//stanje = stanje.V_TEKU;
+		stanje = Stanje.V_TEKU;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				polje.grid[i][j] = null;
@@ -86,7 +81,7 @@ public class Igra {
 		Zeton zeton;
 		int x = poteza.x();
 		int y = poteza.y();
-		if(steviloPotez % 2 == 0)  zeton = Zeton.CRNI;
+		if(naPotezi == Igralec.ČRNI)  zeton = Zeton.CRNI;
 		else zeton = Zeton.BELI;
 	    // Preverimo, če je poteza veljavna
 	    if (!jeVeljavnaPoteza(x,y)) {
@@ -95,7 +90,7 @@ public class Igra {
 
 	    // Izvedemo potezo
 	    polje.dodajZeton(x, y, zeton);
-	    steviloPotez++;
+	    naPotezi = naPotezi.nasprotnik();
 
 	    // Preverimo, če je kateri od igralcev ujel nasprotnikov kamen
 	    if (polje.isCaptured(x, y)) {
@@ -107,7 +102,7 @@ public class Igra {
 	    }
 		List<Poteza> poteze = moznePoteze();
 		for (Poteza p : poteze) {
-		    System.out.println(p.x() + " " + p.y());
+		    //System.out.println(p.x() + " " + p.y());
 		}
 	    return true;
 	}

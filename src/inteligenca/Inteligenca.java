@@ -3,6 +3,7 @@ package inteligenca;
 import logika.*;
 import splosno.KdoIgra;
 import splosno.Poteza;
+import vodja.Vodja;
 
 public class Inteligenca extends KdoIgra {
 
@@ -19,7 +20,7 @@ public class Inteligenca extends KdoIgra {
         
 	    // Perform Monte Carlo simulations
 	    int stSimulacij = 1000; // Number of simulations to perform
-	    for (Poteza poteza : Igra.moznePoteze()) {
+	    for (Poteza poteza : Vodja.igra.moznePoteze()) {
 	        double ocenjevanje = 0;
 
 	        // simulacije
@@ -71,16 +72,6 @@ public class Inteligenca extends KdoIgra {
 	    return najboljsaPoteza;
 	}
 	
-	public void narediPotezo(Poteza poteza) {
-		// naredi najboljso mozno potezo
-		
-		Igra.odigraj(poteza);
-		
-		//updejtaj stanje igre in plosco
-	}
-	
-	
-
 }
 
 
