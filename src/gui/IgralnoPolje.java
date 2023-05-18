@@ -148,45 +148,30 @@ public class IgralnoPolje extends JPanel  implements MouseListener, MouseMotionL
 		}
 	}
 	
+
 	
 	public List<Point> izracunajPresecisca() {
-	    List<Point> presecisca = new ArrayList<Point>();
+	    List<Point> presecisca = new ArrayList<>();
 	    double w = sirinaKvadrata();
 	    double odmikSirina = (getWidth() - (Vodja.igra.velikostPlosce * w)) / 2;
 	    double odmikVisina = (getHeight() - (Vodja.igra.velikostPlosce * w)) / 2;
-	    double polovica = sirinaKvadrata() / 2;
-	    int presecisceSirina = getWidth() / Vodja.igra.velikostPlosce;
-	    int presecisceVisina = getHeight() / Vodja.igra.velikostPlosce;
+	    double polovica = w / 2;
 
-	    // skozi vse vertikalne crte
 	    for (int i = 0; i < Vodja.igra.velikostPlosce; i++) {
-	        int x1 = (int) (i * w + odmikSirina + polovica);
-	        int y1 = (int) (odmikVisina + polovica);
-	        int x2 = x1;
-	        int y2 = (int) (Vodja.igra.velikostPlosce * w + odmikVisina - polovica);
+	        int x = (int) (i * w + odmikSirina + polovica);
 
-	        // skozi vse horizontalne crte
 	        for (int j = 1; j < Vodja.igra.velikostPlosce + 1; j++) {
-	            int x3 = (int) (odmikSirina + polovica);
-	            int y3 = (int) (j * w + odmikVisina - polovica);
-	            int x4 = (int) ((Vodja.igra.velikostPlosce - 1) * w + odmikSirina + polovica);
-	            int y4 = y3;
+	            int y = (int) (j * w + odmikVisina - polovica);
 
-	            // Izracunamo presecisca dveh crt
-	            double d = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4); //ce je det = 0 se ne sekata
-	            if (d != 0) {
-	                double xi = ((x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4)) / d;
-	                double yi = ((x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4)) / d;
-	                Point presecisce = new Point((int) xi, (int) yi);
-	                presecisca.add(presecisce);
-	            }
+	            Point presecisce = new Point(x, y);
+	            presecisca.add(presecisce);
 	        }
 	    }
+
 	    return presecisca;
 	}
-
 	
-
+	
 	private int round(double x) {
 		return(int)(x + 0.5);
 	}

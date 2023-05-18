@@ -122,7 +122,7 @@ public class Okno extends JFrame implements ActionListener{
 			Color barva = JColorChooser.showDialog(this, "Izberi barvo prvega igralca", polje.barvaPrvega);
 			if (barva != null) {
 				polje.barvaPrvega = barva;
-				repaint();
+				
 			}
 		}
 		else if (objekt == menuBarvaDrugega) {
@@ -136,7 +136,7 @@ public class Okno extends JFrame implements ActionListener{
 			Color barva = JColorChooser.showDialog(this, "Izberi barvo roba", polje.barvaRoba);
 			if (barva != null) {
 				polje.barvaRoba = barva;
-				repaint();
+				
 			}
 		}
 		else if (objekt == menuVelikostPlosce) {
@@ -146,7 +146,7 @@ public class Okno extends JFrame implements ActionListener{
 				//polje.nastaviPolje(Integer.parseInt(velikostPlosce));
 				Igra.velikostPlosce =Integer.parseInt(velikostPlosce);
 				Vodja.igramoNovoIgro();
-				repaint();
+				
 			}
 		}
 		else if(objekt == igraClovekRacunalnik) {
@@ -154,27 +154,28 @@ public class Okno extends JFrame implements ActionListener{
 			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C); 
 			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
 			Vodja.igramoNovoIgro();
-			repaint();
+			
 		}
-		 else if (e.getSource() == igraRacunalnikClovek) {
+		 else if (objekt == igraRacunalnikClovek) {
 			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
 			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R); 
 			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.C);
 			Vodja.igramoNovoIgro();
-			repaint();
-		} else if (e.getSource() == igraClovekClovek) {
+			
+		} else if (objekt == igraClovekClovek) {
 			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
 			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C); 
 			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.C);
 			Vodja.igramoNovoIgro();
-			repaint();
-		} else if (e.getSource() == igraRacunalnikRacunalnik) {
+			
+		} else if (objekt == igraRacunalnikRacunalnik) {
 			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
 			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R); 
 			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
 			Vodja.igramoNovoIgro();
-			repaint();
+			
 		}
+		repaint();
 	}
 	public void osveziGUI() {
 		if (Vodja.igra == null) {
