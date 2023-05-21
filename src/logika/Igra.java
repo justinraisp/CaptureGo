@@ -3,6 +3,7 @@ package logika;
 import logika.Zeton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,6 +47,12 @@ public class Igra {
 	
 	public Igralec naPotezi () {
 		return naPotezi;
+	}
+	
+	public Igralec nasprotnik() {
+		if(naPotezi == Igralec.BELI) return Igralec.ČRNI;
+		else return Igralec.BELI;
+				
 	}
 	
 	public boolean aktivna(Stanje stanje) {
@@ -165,14 +172,24 @@ public class Igra {
 	        return; // No possible moves, exit the method
 	    }
 	    
-	    int randomIndex = random.nextInt(prostaPolja.size());
-		Poteza poteza = prostaPolja.get(randomIndex);
+	   // while (stanje == Stanje.V_TEKU) {
+	        int randomIndex = random.nextInt(prostaPolja.size());
+	        Poteza poteza = prostaPolja.get(randomIndex);
+	        odigraj(poteza);
+	        prostaPolja = (ArrayList<Poteza>) moznePoteze();
+	   // }
 	    
-	    //int a = nakljucnaPoteza.x();
-	    //int b = nakljucnaPoteza.y();
-	    //Poteza updated = new Poteza(a,b);
-	    // Play the randomly selected move
-	    odigraj(poteza);
+	}
+
+
+	public Igra kopija() {
+	    Igra kopija = new Igra();
+
+	    kopija.velikostPlosce = this.velikostPlosce;
+	    kopija.naPotezi = this.naPotezi;
+	    kopija.stanje = this.stanje;
+	    kopija.polje = this.polje;
+	    return kopija;
 	}
 
 	

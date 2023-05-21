@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import gui.Okno;
 import inteligenca.Inteligenca;
+import inteligenca.Inteligenca.MonteCarloDrevoSearch;
 import logika.*;
 import splosno.Poteza;
 
@@ -31,7 +32,7 @@ public class Vodja {
 	}
 	
 	public static void igramo () {
-
+		//Poteza poteza = null;
 		//okno.osveziGUI();
 
 		switch (igra.dobiStanje()) {
@@ -46,6 +47,7 @@ public class Vodja {
 				break;
 			case R:
 				Poteza poteza = inteligenca.izberiPotezo(igra);
+				//Poteza poteza = MonteCarloDrevoSearch.findNextMove(igra);
 				igrajRacunalnikovoPotezo(poteza);
 				break;
 			}

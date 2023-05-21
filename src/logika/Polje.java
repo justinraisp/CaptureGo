@@ -64,7 +64,7 @@ public class Polje {
         }
 
         // pogledamo ce so vse okoli nasprotnikovi zetoni
-        for (Point p : obiskane) {System.out.print(p.x);
+        for (Point p : obiskane) {//System.out.print(p.x);
             if ((p.x > 1 && grid[p.x-1][p.y] == null)) return false;
             if (p.x < size && grid[p.x+1][p.y] == null ) return false;
             if (p.y > 1 && grid[p.x][p.y-1] == null  ) return false;
