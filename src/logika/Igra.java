@@ -108,7 +108,7 @@ public class Igra {
 	            stanje = Stanje.ZMAGA_BELI;
 	        }
 	    }
-	    System.out.println(moznePoteze());
+	    //System.out.println(moznePoteze());
 	    return true;
 	}
 	
@@ -161,9 +161,8 @@ public class Igra {
 	private static Random random = new Random ();
 	
 	public boolean odigrajNakljucnoPotezo() {
-	    //ArrayList<Poteza> prostaPolja = (ArrayList<Poteza>) moznePoteze();
-		LinkedList<Poteza> prostaPolja = (LinkedList<Poteza>) moznePoteze();
-		System.out.println(prostaPolja);
+	    ArrayList<Poteza> prostaPolja = (ArrayList<Poteza>) moznePoteze();
+		//LinkedList<Poteza> prostaPolja = (LinkedList<Poteza>) moznePoteze();
 	    
 	    // Check if there are any possible moves
 	    if (prostaPolja.isEmpty() || prostaPolja.size() == 1) {
@@ -189,6 +188,12 @@ public class Igra {
 	    kopija.stanje = this.stanje;
 	    kopija.polje = this.polje;
 	    return kopija;
+	}
+
+
+	public Polje getPolje() {
+		// TODO Auto-generated method stub
+		return polje;
 	}
 
 	

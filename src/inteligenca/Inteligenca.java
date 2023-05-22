@@ -25,34 +25,37 @@ public class Inteligenca extends KdoIgra {
         Igralec nasprotnik = igralec.nasprotnik();
         Drevo drevo = new Drevo(new Vozel(igra));
         Vozel rootVozel = drevo.dobiKoren();
-        rootVozel.igra = igra;
+        rootVozel.setIgra(igra);
 
         while (System.currentTimeMillis() < endTime) {
-        	System.out.print("halo");
+        	System.out.println("halo");
             Vozel promisingVozel = selectPromisingVozel(rootVozel);
-            if (promisingVozel.igra.stanje == Stanje.V_TEKU) {
+            if (promisingVozel.getStanje() == Stanje.V_TEKU) {
                 expandVozel(promisingVozel);
             }
-            Vozel nodeToExplore = promisingVozel;;
+            Vozel nodeToExplore = promisingVozel;
+            System.out.println("halo2");
             if (!promisingVozel.otroci.isEmpty()) {
-                nodeToExplore = promisingVozel.otroci.get((int) (Math.random() * promisingVozel.otroci.size()));
+                nodeToExplore = promisingVozel.getOtroci().get((int) (Math.random() * promisingVozel.otroci.size()));
             }
+            System.out.println("halo3");
             String playoutResult = simulateRandomPlayout(nodeToExplore, igralec);
+            System.out.println("halo4");
             backPropagation(nodeToExplore, playoutResult);
         }
 
-
-        Vozel winnerVozel = rootVozel.otroci.stream()
+        Vozel winnerVozel = rootVozel.getOtroci().stream()
                 .max(Comparator.comparing(c -> c.state.visitCount))
                 .orElseThrow(RuntimeException::new);
         drevo.nastaviKoren(winnerVozel);
     	
-        Polje originalPolje = igra.polje;
-        Polje updatedPolje = winnerVozel.igra.polje;
+        Polje originalPolje = igra.getPolje();
+        Polje updatedPolje = winnerVozel.getPolje();
         for (int i = 1; i < igra.velikostPlosce +1; i++) {
             for (int j = 1; j < igra.velikostPlosce+1; j++) {
                 if (originalPolje.grid[i][j] == null && updatedPolje.grid[i][j] != null) {
         	        zmagovalna = new Poteza(i,j);
+        	        System.out.println(zmagovalna);
                 }
             }
         }
@@ -121,9 +124,9 @@ public class Inteligenca extends KdoIgra {
     }
 
     private void expandVozel(Vozel node) {
-        List<Poteza> possibleStates = node.igra.moznePoteze();
+        List<Poteza> possibleStates = node.getIgra().moznePoteze();
         possibleStates.forEach(poteza -> {
-        	Igra novaIgra = node.igra;
+        	Igra novaIgra = node.getIgra();
         	novaIgra.odigraj(poteza);
             Vozel newVozel = new Vozel(novaIgra);
             newVozel.stars = node;
@@ -133,21 +136,21 @@ public class Inteligenca extends KdoIgra {
 
     private void backPropagation(Vozel nodeToExplore, String rezultat) {
         Vozel tempVozel = nodeToExplore;
-        State tempState = tempVozel.state;
-        Stanje boardStatus = tempState.igra.stanje;
+        State tempState = tempVozel.getState();
+        Stanje boardStatus = tempState.getStanje();
         while (tempVozel != null) {
             tempVozel.state.visitCount++;
             if (rezultat != null && rezultat.equals("zmaga")) {
-                tempVozel.state.winScore += 10;
+                tempVozel.state.addWinScore(10);
             }
-            tempVozel = tempVozel.stars;
+            tempVozel = tempVozel.getStars();
         }
     }
 
     private String simulateRandomPlayout(Vozel node, Igralec igralec) {
     	Igralec nasprotnik = igralec.nasprotnik();
-        Vozel tempVozel = new Vozel(node.igra);
-        Stanje boardStatus = tempVozel.igra.stanje;
+        Vozel tempVozel = new Vozel(node.getIgra());
+        Stanje boardStatus = tempVozel.getStanje();
         String rezultat = null;
         if ((boardStatus == Stanje.ZMAGA_BELI && nasprotnik == Igralec.BELI) || (boardStatus == Stanje.ZMAGA_CRNI && nasprotnik == Igralec.ČRNI)) {
         	rezultat = "poraz";
@@ -178,6 +181,46 @@ public class Inteligenca extends KdoIgra {
 	        this.igra = igra;
 	        this.otroci = new ArrayList<>();
 	        this.state = new State(igra);
+	    }
+	    
+	    public State getState() {
+	    	return state;
+	    }
+	    
+	    public void setState(State state) {
+	    	this.state = state;
+	    }
+
+	    public Stanje getStanje() {
+	    	return igra.stanje;
+	    }
+	    
+	    public void setStanje(Stanje stanje) {
+	    	this.igra.stanje = stanje;
+	    }
+	    
+	    public List<Vozel> getOtroci() {
+	    	return otroci;
+	    }
+	    
+	    public Vozel getStars() {
+	    	return stars;
+	    }
+	    
+	    public Polje getPolje() {
+	    	return igra.polje;
+	    }
+	    
+	    public void setPolje(Polje polje) {
+	    	this.igra.polje = polje;
+	    }
+	    
+	    public Igra getIgra() {
+	    	return igra;
+	    }
+	    
+	    public void setIgra(Igra igra) {
+	    	this.igra = igra;
 	    }
 
 	    // Setters and getters
@@ -218,7 +261,42 @@ public class Inteligenca extends KdoIgra {
 	        this.visitCount = visitCount;
 	        this.winScore = winScore;
 	    }
+	    
+	    public Stanje getStanje() {
+	    	return igra.stanje;
+	    }
+	    
+	    public Igra getIgra() {
+	    	return igra;
+	    }
+	    
+	    public void setIgra(Igra igra) {
+	    	this.igra = igra;
+	    }
+	    
+	    public Igralec getIgralecNaVrsti() {
+	    	return igralecNaVrsti;
+	    }
+	    
+	    public void nastaviIgralecNaVrsti(Igralec igralec) {
+	    	this.igralecNaVrsti = igralec;
+	    }
+	    
+	    public int getVisitCount() {
+	    	return visitCount;
+	    }
+	    
+	    public void setVisitCount(int i) {
+	    	this.visitCount = i;
+	    }
+	    
+	    public double getWinScore() {
+	    	return winScore;
+	    }
 
+	    public void addWinScore(double i) {
+	    	this.winScore += i;
+	    }
 	    // Getters and setters
 
 	    public List<State> getAllPossibleStates() {
@@ -258,7 +336,7 @@ public class Inteligenca extends KdoIgra {
 	        //opponent = 3 - playerNo;
 	        Drevo drevo = new Drevo(new Vozel(igra));
 	        Vozel rootVozel = drevo.dobiKoren();
-	        rootVozel.igra = igra;
+	        rootVozel.setIgra(igra);
 
 	        while (System.currentTimeMillis() < endTime) {
 	            Vozel promisingVozel = selectPromisingVozel(rootVozel);
@@ -278,8 +356,8 @@ public class Inteligenca extends KdoIgra {
 	                .orElseThrow(RuntimeException::new);
 	        drevo.nastaviKoren(winnerVozel);
 	    	
-	        Polje originalPolje = igra.polje;
-	        Polje updatedPolje = winnerVozel.igra.polje;
+	        Polje originalPolje = igra.getPolje();
+	        Polje updatedPolje = winnerVozel.getPolje();
 	        for (int i = 1; i < igra.velikostPlosce +1; i++) {
 	            for (int j = 1; j < igra.velikostPlosce+1; j++) {
 	                if (originalPolje.grid[i][j] == null && updatedPolje.grid[i][j] != null) {
@@ -292,7 +370,7 @@ public class Inteligenca extends KdoIgra {
 
 	    private Vozel selectPromisingVozel(Vozel rootVozel) {
 	        Vozel node = rootVozel;
-	        while (!node.otroci.isEmpty()) {
+	        while (!node.getOtroci().isEmpty()) {
 	            node = UCT.findBestVozelWithUCT(node);
 	        }
 	        return node;
@@ -301,7 +379,7 @@ public class Inteligenca extends KdoIgra {
 	    private void expandVozel(Vozel node) {
 	        List<Poteza> possibleStates = node.igra.moznePoteze();
 	        possibleStates.forEach(poteza -> {
-	        	Igra novaIgra = node.igra;
+	        	Igra novaIgra = node.getIgra();
 	        	novaIgra.odigraj(poteza);
 	            Vozel newVozel = new Vozel(novaIgra);
 	            newVozel.stars = node;
@@ -311,12 +389,12 @@ public class Inteligenca extends KdoIgra {
 
 	    private void backPropagation(Vozel nodeToExplore, String rezultat) {
 	        Vozel tempVozel = nodeToExplore;
-	        State tempState = tempVozel.state;
-	        Stanje boardStatus = tempState.igra.stanje;
+	        State tempState = tempVozel.getState();
+	        Stanje boardStatus = tempState.getStanje();
 	        while (tempVozel != null) {
 	            tempVozel.state.visitCount++;
 	            if (rezultat == "zmaga") {
-	                tempVozel.state.winScore += WIN_SCORE;
+	                tempVozel.state.addWinScore(10);
 	            }
 	            tempVozel = tempVozel.stars;
 	        }
@@ -324,8 +402,8 @@ public class Inteligenca extends KdoIgra {
 
 	    private String simulateRandomPlayout(Vozel node) {
 	        Vozel tempVozel = new Vozel(node.igra);
-	        State tempState = tempVozel.state;
-	        Stanje boardStatus = tempState.igra.stanje;
+	        State tempState = tempVozel.getState();
+	        Stanje boardStatus = tempState.getStanje();
 	        String rezultat = null;
 	        if ((boardStatus == Stanje.ZMAGA_BELI && nasprotnik == Igralec.BELI) || (boardStatus == Stanje.ZMAGA_CRNI && nasprotnik == Igralec.ČRNI)) {
 	        	rezultat = "poraz";
@@ -336,7 +414,7 @@ public class Inteligenca extends KdoIgra {
 	        }
 	        while (boardStatus == Stanje.V_TEKU) {
 	            tempState.randomPlay();
-	            boardStatus = tempState.igra.stanje;
+	            boardStatus = tempState.getStanje();
 	        }
 	        return rezultat;
 	    }
@@ -359,7 +437,7 @@ public class Inteligenca extends KdoIgra {
 	            c.state.winScore, c.state.visitCount)));
 	    }
 
-	
+	 
 	
 }
 
