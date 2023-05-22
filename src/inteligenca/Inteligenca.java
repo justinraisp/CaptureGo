@@ -17,6 +17,49 @@ public class Inteligenca extends KdoIgra {
 		super("Shusaku");
 	}
 	
+	public Poteza findNextMove(Igra igra, Igralec igralec) {
+	    final int WIN_SCORE = 10;
+	    long endTime;
+    	Poteza zmagovalna = null;
+        endTime = System.currentTimeMillis() + 5000; // Set end time for termination
+        Igralec nasprotnik = igralec.nasprotnik();
+        Drevo drevo = new Drevo(new Vozel(igra));
+        Vozel rootVozel = drevo.dobiKoren();
+        rootVozel.igra = igra;
+
+        while (System.currentTimeMillis() < endTime) {
+        	System.out.print("halo");
+            Vozel promisingVozel = selectPromisingVozel(rootVozel);
+            if (promisingVozel.igra.stanje == Stanje.V_TEKU) {
+                expandVozel(promisingVozel);
+            }
+            Vozel nodeToExplore = promisingVozel;;
+            if (!promisingVozel.otroci.isEmpty()) {
+                nodeToExplore = promisingVozel.otroci.get((int) (Math.random() * promisingVozel.otroci.size()));
+            }
+            String playoutResult = simulateRandomPlayout(nodeToExplore, igralec);
+            backPropagation(nodeToExplore, playoutResult);
+        }
+
+
+        Vozel winnerVozel = rootVozel.otroci.stream()
+                .max(Comparator.comparing(c -> c.state.visitCount))
+                .orElseThrow(RuntimeException::new);
+        drevo.nastaviKoren(winnerVozel);
+    	
+        Polje originalPolje = igra.polje;
+        Polje updatedPolje = winnerVozel.igra.polje;
+        for (int i = 1; i < igra.velikostPlosce +1; i++) {
+            for (int j = 1; j < igra.velikostPlosce+1; j++) {
+                if (originalPolje.grid[i][j] == null && updatedPolje.grid[i][j] != null) {
+        	        zmagovalna = new Poteza(i,j);
+                }
+            }
+        }
+        System.out.println(zmagovalna);
+        return zmagovalna;
+    }
+	
 	
 	public Poteza izberiPotezo(Igra igra) {
 	    long zacetek = System.currentTimeMillis();
@@ -69,6 +112,60 @@ public class Inteligenca extends KdoIgra {
 
 	    return najboljsaPoteza;
 	}
+    private Vozel selectPromisingVozel(Vozel rootVozel) {
+        Vozel node = rootVozel;
+        while (!node.otroci.isEmpty()) {
+            node = UCT.findBestVozelWithUCT(node);
+        }
+        return node;
+    }
+
+    private void expandVozel(Vozel node) {
+        List<Poteza> possibleStates = node.igra.moznePoteze();
+        possibleStates.forEach(poteza -> {
+        	Igra novaIgra = node.igra;
+        	novaIgra.odigraj(poteza);
+            Vozel newVozel = new Vozel(novaIgra);
+            newVozel.stars = node;
+            node.otroci.add(newVozel);
+        });
+    }
+
+    private void backPropagation(Vozel nodeToExplore, String rezultat) {
+        Vozel tempVozel = nodeToExplore;
+        State tempState = tempVozel.state;
+        Stanje boardStatus = tempState.igra.stanje;
+        while (tempVozel != null) {
+            tempVozel.state.visitCount++;
+            if (rezultat != null && rezultat.equals("zmaga")) {
+                tempVozel.state.winScore += 10;
+            }
+            tempVozel = tempVozel.stars;
+        }
+    }
+
+    private String simulateRandomPlayout(Vozel node, Igralec igralec) {
+    	Igralec nasprotnik = igralec.nasprotnik();
+        Vozel tempVozel = new Vozel(node.igra);
+        Stanje boardStatus = tempVozel.igra.stanje;
+        String rezultat = null;
+        if ((boardStatus == Stanje.ZMAGA_BELI && nasprotnik == Igralec.BELI) || (boardStatus == Stanje.ZMAGA_CRNI && nasprotnik == Igralec.ČRNI)) {
+        	rezultat = "poraz";
+        }
+        //if (rezultat != null && rezultat.equals("poraz")) {
+        //    tempVozel.stars.state.winScore = Integer.MIN_VALUE;
+        //    return rezultat;
+        //}
+        while (tempVozel.igra.aktivna(boardStatus) && tempVozel.igra.odigrajNakljucnoPotezo()) {
+        	tempVozel.igra.odigrajNakljucnoPotezo();
+        }
+        if ((boardStatus == Stanje.ZMAGA_BELI && nasprotnik == Igralec.BELI) || (boardStatus == Stanje.ZMAGA_CRNI && nasprotnik == Igralec.ČRNI)) {
+        	rezultat = "poraz";
+        }
+        return rezultat;
+    }
+	
+	
 
 
 	public class Vozel {
@@ -80,6 +177,7 @@ public class Inteligenca extends KdoIgra {
 	    public Vozel(Igra igra) {
 	        this.igra = igra;
 	        this.otroci = new ArrayList<>();
+	        this.state = new State(igra);
 	    }
 
 	    // Setters and getters
@@ -88,7 +186,11 @@ public class Inteligenca extends KdoIgra {
 	public class Drevo {
 	    Vozel koren;
 
-	    public Vozel dobiKoren() {
+	    public Drevo(Vozel koren) {
+	    	this.koren = koren;
+		}
+
+		public Vozel dobiKoren() {
 	        return koren;
 	    }
 
@@ -103,8 +205,8 @@ public class Inteligenca extends KdoIgra {
 	    int visitCount;
 	    double winScore;
 
-	    public State() {
-	        this.igra.polje = new Polje(9);
+	    public State(Igra igra) {
+	        this.igra= igra;
 	        this.igralecNaVrsti = igra.naPotezi;
 	        this.visitCount = 0;
 	        this.winScore = 0;
@@ -136,10 +238,10 @@ public class Inteligenca extends KdoIgra {
 	    }
 
 	    public void randomPlay() {
-	        List<Poteza> emptyPositions = igra.moznePoteze();
-	        int randomIndex = (int) (Math.random() * emptyPositions.size());
-	        Poteza randomPosition = emptyPositions.get(randomIndex);
-	        igra.odigraj(randomPosition);
+	        //List<Poteza> emptyPositions = igra.moznePoteze();
+	        //int randomIndex = (int) (Math.random() * emptyPositions.size());
+	        //Poteza randomPosition = emptyPositions.get(randomIndex);
+	        igra.odigrajNakljucnoPotezo();
 	    }
 	}
 
@@ -154,7 +256,7 @@ public class Inteligenca extends KdoIgra {
 	        endTime = System.currentTimeMillis() + 5000; // Set end time for termination
 	        Igralec Nasprotnik = barva.nasprotnik();
 	        //opponent = 3 - playerNo;
-	        Drevo drevo = new Drevo();
+	        Drevo drevo = new Drevo(new Vozel(igra));
 	        Vozel rootVozel = drevo.dobiKoren();
 	        rootVozel.igra = igra;
 

@@ -108,10 +108,7 @@ public class Igra {
 	            stanje = Stanje.ZMAGA_BELI;
 	        }
 	    }
-		List<Poteza> poteze = moznePoteze();
-		for (Poteza p : poteze) {
-		    //System.out.println(p.x() + " " + p.y());
-		}
+	    System.out.println(moznePoteze());
 	    return true;
 	}
 	
@@ -163,21 +160,23 @@ public class Igra {
 	
 	private static Random random = new Random ();
 	
-	public void odigrajNakljucnoPotezo() {
-	    ArrayList<Poteza> prostaPolja = (ArrayList<Poteza>) moznePoteze();
-		
+	public boolean odigrajNakljucnoPotezo() {
+	    //ArrayList<Poteza> prostaPolja = (ArrayList<Poteza>) moznePoteze();
+		LinkedList<Poteza> prostaPolja = (LinkedList<Poteza>) moznePoteze();
+		System.out.println(prostaPolja);
 	    
 	    // Check if there are any possible moves
-	    if (prostaPolja.isEmpty()) {
-	        return; // No possible moves, exit the method
+	    if (prostaPolja.isEmpty() || prostaPolja.size() == 1) {
+	        return false; // No possible moves, exit the method
 	    }
 	    
 	   // while (stanje == Stanje.V_TEKU) {
-	        int randomIndex = random.nextInt(prostaPolja.size());
-	        Poteza poteza = prostaPolja.get(randomIndex);
-	        odigraj(poteza);
-	        prostaPolja = (ArrayList<Poteza>) moznePoteze();
+	   int randomIndex = random.nextInt(prostaPolja.size());
+	   Poteza poteza = prostaPolja.get(randomIndex);
+	   odigraj(poteza);
+	        //prostaPolja = (List<Poteza>) moznePoteze();
 	   // }
+	    return true;
 	    
 	}
 

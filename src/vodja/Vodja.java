@@ -46,8 +46,8 @@ public class Vodja {
 				clovekNaVrsti = true;
 				break;
 			case R:
-				Poteza poteza = inteligenca.izberiPotezo(igra);
-				//Poteza poteza = MonteCarloDrevoSearch.findNextMove(igra);
+				//Poteza poteza = inteligenca.izberiPotezo(igra);
+				Poteza poteza = inteligenca.findNextMove(igra, igralec);
 				igrajRacunalnikovoPotezo(poteza);
 				break;
 			}
@@ -58,12 +58,14 @@ public class Vodja {
 	private static Random random = new Random ();
 
 	public static void igrajRacunalnikovoPotezo(Poteza poteza) {
-		igra.odigraj(poteza);
-		igramo ();
+		if (poteza != null && igra.odigraj(poteza)) {
+			igra.odigraj(poteza);
+			igramo ();
+		}
 	}
 		
 	public static void igrajClovekovoPotezo(Poteza poteza) {
-		if (igra.odigraj(poteza)) {
+		if (poteza != null && igra.odigraj(poteza)) {
 			igra.odigraj(poteza);
 			clovekNaVrsti = false;
 			igramo ();
