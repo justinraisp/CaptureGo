@@ -4,6 +4,7 @@ import logika.Zeton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -161,17 +162,21 @@ public class Igra {
 	private static Random random = new Random ();
 	
 	public boolean odigrajNakljucnoPotezo() {
-	    ArrayList<Poteza> prostaPolja = (ArrayList<Poteza>) moznePoteze();
+	    ArrayList<Poteza> prostaPolja = new ArrayList<>(moznePoteze());
 		//LinkedList<Poteza> prostaPolja = (LinkedList<Poteza>) moznePoteze();
-	    
+	    Collections.shuffle(prostaPolja);
+	    // Play a random move from the shuffled list
+	    Poteza poteza = prostaPolja.get(0);
 	    // Check if there are any possible moves
-	    if (prostaPolja.isEmpty() || prostaPolja.size() == 1) {
-	        return false; // No possible moves, exit the method
+		if(prostaPolja.size() == 1) {
+			odigraj(poteza);
+			return false;
+		}
+	    if (prostaPolja.isEmpty()) {
+	    	return false; // No possible moves, exit the method
 	    }
-	    
 	   // while (stanje == Stanje.V_TEKU) {
-	   int randomIndex = random.nextInt(prostaPolja.size());
-	   Poteza poteza = prostaPolja.get(randomIndex);
+	   System.out.println(poteza);
 	   odigraj(poteza);
 	        //prostaPolja = (List<Poteza>) moznePoteze();
 	   // }

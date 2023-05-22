@@ -60,6 +60,7 @@ public class Vodja {
 	public static void igrajRacunalnikovoPotezo(Poteza poteza) {
 		if (poteza != null && igra.odigraj(poteza)) {
 			igra.odigraj(poteza);
+			clovekNaVrsti = true;
 			igramo ();
 		}
 	}
