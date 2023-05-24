@@ -1,6 +1,9 @@
 package inteligenca;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -23,7 +26,7 @@ public class Inteligenca extends KdoIgra {
 	public Poteza findNextMove(Igra igraOg, Igralec igralec) {
 	    Igra igra = igraOg.kopija();
     	Poteza zmagovalna = null;
-        long endTime = System.currentTimeMillis() + 10000; // Set end time for termination
+        long endTime = System.currentTimeMillis() + 5000; // Set end time for termination
         Igralec nasprotnik = igralec.nasprotnik();
         Drevo drevo = new Drevo(new Vozel(igra));
         Vozel rootVozel = drevo.dobiKoren();
@@ -43,12 +46,18 @@ public class Inteligenca extends KdoIgra {
                 nodeToExplore = promisingVozel.getOtroci().get(random.nextInt(promisingVozel.getOtroci().size()));
             }
             //nodeToExplore.igra.polje.printGrid();
-            String playoutResult = simulateRandomPlayout(nodeToExplore, igralec);
-            backPropagation(nodeToExplore, playoutResult);
-            k++;
+            //String playoutResult = simulateRandomPlayout(nodeToExplore, igralec);
+            List<String> rezultati = runParallelPlayouts(nodeToExplore, igralec);
+            for (int l=0;l<10;l++) {
+            	String playoutResult = rezultati.get(l);
+            	backPropagation(nodeToExplore, playoutResult);
+            	k++;
+            }
+            
         }
         Vozel winnerVozel = rootVozel.getNajboljsiOtrok();
         System.out.println(winnerVozel.state.winScore);
+        System.out.println(winnerVozel.state.visitCount);
         System.out.println(rootVozel.otroci.get(5).state.winScore);
         drevo.nastaviKoren(winnerVozel);
         Polje originalPolje = igra.getPolje();
@@ -117,7 +126,7 @@ public class Inteligenca extends KdoIgra {
 	    return najboljsaPoteza;
 	}
     private Vozel selectPromisingVozel(Vozel rootVozel) {
-        Vozel node = rootVozel.kopija();
+        Vozel node = rootVozel;
         while (!node.otroci.isEmpty()) {
             node = UCT.findBestVozelWithUCT(node);
         }
@@ -161,12 +170,54 @@ public class Inteligenca extends KdoIgra {
         }
         //tempVozel.igra.polje.printGrid();
         if ((boardStatus == Stanje.ZMAGA_BELI && nasprotnik == Igralec.BELI) || (boardStatus == Stanje.ZMAGA_CRNI && nasprotnik == Igralec.ČRNI)) {
-        	tempVozel.getStars().getState().setWinScore(Integer.MIN_VALUE);
+        	//tempVozel.getStars().getState().setWinScore(Integer.MIN_VALUE);
         	rezultat = "poraz";
         }
         else rezultat = "zmaga";
         return rezultat;
     }
+    public List<String> runParallelPlayouts(Vozel node, Igralec igralec) {
+        int numPlayouts = 10; // Number of playouts to execute
+        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        List<Future<String>> results = new ArrayList<>();
+
+        for (int i = 0; i < numPlayouts; i++) {
+            Future<String> result = (Future<String>) executor.submit(() -> simulateRandomPlayout(node, igralec));
+            results.add(result);
+        }
+
+        // Wait for all playouts to complete
+        executor.shutdown();
+        while (!executor.isTerminated()) {
+            // Waiting for all tasks to finish
+        }
+
+        // Process the results
+        for (Future<String> result : results) {
+            try {
+                // Process the result as needed
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        List<String> playoutResults = new ArrayList<>();
+        for (Future<String> result : results) {
+            try {
+                String playoutResult = result.get();
+                playoutResults.add(playoutResult);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return playoutResults;
+    }
+   
+
+
+
+
+
+
 	
 	
 
