@@ -41,6 +41,17 @@ public class Polje {
         }
     }
     
+    public Polje kopija() {
+    	Polje kopija = new Polje(size);
+    	kopija.grid = new Zeton[size+1][size+1];
+        for (int x = 1; x <= size; x++) {
+            for (int y = 1; y <= size; y++) {
+                kopija.grid[x][y] = this.grid[x][y];
+            }
+        }
+        return kopija;
+    }
+    
     
     public boolean isCaptured(int x, int y) {
         Zeton igralec = grid[x][y]; 

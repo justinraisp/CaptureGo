@@ -163,23 +163,31 @@ public class Igra {
 	
 	public boolean odigrajNakljucnoPotezo() {
 	    ArrayList<Poteza> prostaPolja = new ArrayList<>(moznePoteze());
-		//LinkedList<Poteza> prostaPolja = (LinkedList<Poteza>) moznePoteze();
+
 	    Collections.shuffle(prostaPolja);
-	    // Play a random move from the shuffled list
+
 	    Poteza poteza = prostaPolja.get(0);
-	    // Check if there are any possible moves
+		Zeton zeton;
+		int x = poteza.x();
+		int y = poteza.y();
+		if(naPotezi == Igralec.ČRNI)  zeton = Zeton.CRNI;
+		else zeton = Zeton.BELI;
 		if(prostaPolja.size() == 1) {
 			odigraj(poteza);
 			return false;
 		}
 	    if (prostaPolja.isEmpty()) {
 	    	return false; // No possible moves, exit the method
+	    } 
+	    if (polje.isCaptured(x, y)) {
+	        if (zeton == Zeton.CRNI) {
+	            stanje = Stanje.ZMAGA_CRNI;
+	        } else {
+	            stanje = Stanje.ZMAGA_BELI;
+	        }
+	        return false;
 	    }
-	   // while (stanje == Stanje.V_TEKU) {
-	   System.out.println(poteza);
 	   odigraj(poteza);
-	        //prostaPolja = (List<Poteza>) moznePoteze();
-	   // }
 	    return true;
 	    
 	}
@@ -187,11 +195,10 @@ public class Igra {
 
 	public Igra kopija() {
 	    Igra kopija = new Igra();
-
 	    kopija.velikostPlosce = this.velikostPlosce;
 	    kopija.naPotezi = this.naPotezi;
 	    kopija.stanje = this.stanje;
-	    kopija.polje = this.polje;
+	    kopija.polje = this.polje.kopija();
 	    return kopija;
 	}
 

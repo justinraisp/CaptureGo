@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 
 import gui.Okno;
 import inteligenca.Inteligenca;
-import inteligenca.Inteligenca.MonteCarloDrevoSearch;
 import logika.*;
 import splosno.Poteza;
 
@@ -36,8 +35,8 @@ public class Vodja {
 		//okno.osveziGUI();
 
 		switch (igra.dobiStanje()) {
-		case ZMAGA_BELI: 
-		case ZMAGA_CRNI:
+		case ZMAGA_BELI: break;
+		case ZMAGA_CRNI: break;
 		case V_TEKU: 
 			Igralec igralec = igra.naPotezi();
 			VrstaIgralca vrstaNaPotezi = vrstaIgralca.get(igralec);
@@ -48,6 +47,7 @@ public class Vodja {
 			case R:
 				//Poteza poteza = inteligenca.izberiPotezo(igra);
 				Poteza poteza = inteligenca.findNextMove(igra, igralec);
+				System.out.println(poteza);
 				igrajRacunalnikovoPotezo(poteza);
 				break;
 			}
@@ -59,7 +59,7 @@ public class Vodja {
 
 	public static void igrajRacunalnikovoPotezo(Poteza poteza) {
 		if (poteza != null && igra.odigraj(poteza)) {
-			igra.odigraj(poteza);
+			//igra.odigraj(poteza);
 			clovekNaVrsti = true;
 			igramo ();
 		}
@@ -67,7 +67,7 @@ public class Vodja {
 		
 	public static void igrajClovekovoPotezo(Poteza poteza) {
 		if (poteza != null && igra.odigraj(poteza)) {
-			igra.odigraj(poteza);
+			//igra.odigraj(poteza);
 			clovekNaVrsti = false;
 			igramo ();
 		}
