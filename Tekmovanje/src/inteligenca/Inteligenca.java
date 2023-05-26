@@ -21,12 +21,12 @@ public class Inteligenca extends KdoIgra {
 	}
 
 	public Poteza izberiPotezo(Igra igraOg) {
-		Igra igra = igraOg.kopija(); //naredimo kopijo igre
+		Igra igra = igraOg.kopija(); // naredimo kopijo igre
 		Igralec igralec = igra.naPotezi;
 		Poteza zmagovalna = null;
 		long endTime = System.currentTimeMillis() + 5000; // Za potezo ima 5s
 		Igralec nasprotnik = igralec.nasprotnik();
-		Drevo drevo = new Drevo(new Vozel(igra)); //ustvarimo novo drevo in damo trenuten vozel za koren
+		Drevo drevo = new Drevo(new Vozel(igra)); // ustvarimo novo drevo in damo trenuten vozel za koren
 		Vozel korenVozel = drevo.dobiKoren();
 		korenVozel.dobiState().nastaviIgra(igra);
 		korenVozel.nastaviIgralec(igralec);
@@ -109,7 +109,7 @@ public class Inteligenca extends KdoIgra {
 	}
 
 	public List<String> odigrajVzporedneIgre(Vozel vozel, Igralec igralec) {
-		int steviloIger = 10; 
+		int steviloIger = 10;
 		ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 		List<Future<String>> results = new ArrayList<>();
 

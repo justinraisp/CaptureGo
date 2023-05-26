@@ -10,7 +10,7 @@ public enum Igralec {
 //	public Polje getPolje() {
 //		return (this == BELI ? Polje.BELI : Polje.ČRNI);
 //	}
-	
+
 	@Override
 	public String toString() {
 		return (this == BELI ? "BELI" : "ČRNI");
