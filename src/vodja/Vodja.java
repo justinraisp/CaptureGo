@@ -12,68 +12,66 @@ import inteligenca.Inteligenca;
 import logika.*;
 import splosno.Poteza;
 
+public class Vodja {
 
-public class Vodja {	
-	
-	public static Map<Igralec,VrstaIgralca> vrstaIgralca;
-	
+	public static Map<Igralec, VrstaIgralca> vrstaIgralca;
+
 	public static Okno okno;
-	
+
 	public static Igra igra = null;
-	
+
 	public static boolean clovekNaVrsti = false;
-	
+
 	static Inteligenca inteligenca = new Inteligenca();
-		
-	public static void igramoNovoIgro () {
-		igra = new Igra ();
-		igramo ();
+
+	public static void igramoNovoIgro() {
+		igra = new Igra();
+		igramo();
 	}
-	
-	public static void igramo () {
-		//Poteza poteza = null;
-		//okno.osveziGUI();
+
+	public static void igramo() {
+		// Poteza poteza = null;
+		// okno.osveziGUI();
 
 		switch (igra.dobiStanje()) {
-		case ZMAGA_BELI: break;
-		case ZMAGA_CRNI: break;
-		case V_TEKU: 
+		case ZMAGA_BELI:
+			break;
+		case ZMAGA_CRNI:
+			break;
+		case V_TEKU:
 			Igralec igralec = igra.naPotezi();
 			VrstaIgralca vrstaNaPotezi = vrstaIgralca.get(igralec);
 			switch (vrstaNaPotezi) {
-			case C: 
+			case C:
 				clovekNaVrsti = true;
 				break;
 			case R:
-				//Poteza poteza = inteligenca.izberiPotezo(igra);
-				Poteza poteza = inteligenca.findNextMove(igra, igralec);
+				// Poteza poteza = inteligenca.izberiPotezo(igra);
+				Poteza poteza = inteligenca.izberiPotezo(igra);
 				System.out.println(poteza);
 				igrajRacunalnikovoPotezo(poteza);
 				break;
 			}
 		}
-		//okno.osveziGUI();
+		// okno.osveziGUI();
 	}
-	
-	private static Random random = new Random ();
+
+	private static Random random = new Random();
 
 	public static void igrajRacunalnikovoPotezo(Poteza poteza) {
 		if (poteza != null && igra.odigraj(poteza)) {
-			//igra.odigraj(poteza);
+			// igra.odigraj(poteza);
 			clovekNaVrsti = true;
-			igramo ();
+			igramo();
 		}
 	}
-		
+
 	public static void igrajClovekovoPotezo(Poteza poteza) {
 		if (poteza != null && igra.odigraj(poteza)) {
-			//igra.odigraj(poteza);
+			// igra.odigraj(poteza);
 			clovekNaVrsti = false;
-			igramo ();
+			igramo();
 		}
 	}
-	
-	
-
 
 }

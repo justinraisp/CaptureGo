@@ -16,412 +16,312 @@ import vodja.Vodja;
 
 public class Inteligenca extends KdoIgra {
 
-
 	public Inteligenca() {
 		super("Shusaku");
 	}
-	
-	
-	
-	public Poteza findNextMove(Igra igraOg, Igralec igralec) {
-	    Igra igra = igraOg.kopija();
-    	Poteza zmagovalna = null;
-        long endTime = System.currentTimeMillis() + 5000; // Set end time for termination
-        Igralec nasprotnik = igralec.nasprotnik();
-        Drevo drevo = new Drevo(new Vozel(igra));
-        Vozel rootVozel = drevo.dobiKoren();
-        rootVozel.getState().setIgra(igra);
-        rootVozel.setIgralec(igralec);
-        //rootVozel.igra.polje.printGrid();
-        Random random = new Random();
-        int k = 0;
-        while (System.currentTimeMillis() < endTime) {
-            Vozel promisingVozel = selectPromisingVozel(rootVozel);
-            //igra.polje.printGrid();
-            if (promisingVozel.getStanje() == Stanje.V_TEKU) {
-                expandVozel(promisingVozel);
-            }
-            Vozel nodeToExplore = promisingVozel;
-            if (promisingVozel.getOtroci().size() >0) {
-                nodeToExplore = promisingVozel.getOtroci().get(random.nextInt(promisingVozel.getOtroci().size()));
-            }
-            //nodeToExplore.igra.polje.printGrid();
-            //String playoutResult = simulateRandomPlayout(nodeToExplore, igralec);
-            List<String> rezultati = runParallelPlayouts(nodeToExplore, igralec);
-            for (int l=0;l<10;l++) {
-            	String playoutResult = rezultati.get(l);
-            	backPropagation(nodeToExplore, playoutResult);
-            	k++;
-            }
-            
-        }
-        Vozel winnerVozel = rootVozel.getNajboljsiOtrok();
-        System.out.println(winnerVozel.state.winScore);
-        System.out.println(winnerVozel.state.visitCount);
-        System.out.println(rootVozel.otroci.get(5).state.winScore);
-        drevo.nastaviKoren(winnerVozel);
-        Polje originalPolje = igra.getPolje();
-        Polje updatedPolje = winnerVozel.getPolje();
-        for (int i = 1; i < igra.velikostPlosce +1; i++) {
-            for (int j = 1; j < igra.velikostPlosce+1; j++) {
-                if (originalPolje.grid[i][j] == null && updatedPolje.grid[i][j] != null) {
-        	        zmagovalna = new Poteza(i,j);
-                }
-            }
-        }
-        System.out.println(k);
-        return zmagovalna;
-    }
-	
-	
-	public Poteza izberiPotezo(Igra igra) {
-	    long zacetek = System.currentTimeMillis();
-	    Poteza najboljsaPoteza = null;
-	    double najboljseOcenjevanje = Double.NEGATIVE_INFINITY;
 
-	    // Perform Monte Carlo simulations
-	    int stSimulacij = 1000; // Number of simulations to perform
-
-	    for (Poteza poteza : igra.moznePoteze()) {
-	        double ocenjevanje = 0;
-
-	        // Simulations
-	        for (int i = 0; i < stSimulacij; i++) {
-	            Igra kopijaIgre = new Igra(); // Create a copy of the game
-	            kopijaIgre.odigraj(poteza);
-	            Stanje stanje = kopijaIgre.dobiStanje();
-
-	            // Play random moves until the end of the game
-	            while (!kopijaIgre.aktivna(stanje)) {
-	                kopijaIgre.odigrajNakljucnoPotezo();
-	                stanje = kopijaIgre.dobiStanje();
-	            }
-
-	            // Evaluate the outcome of the game
-	            int[] steviloZmag = new int[2];
-	            if (stanje == Stanje.ZMAGA_CRNI) {
-	                steviloZmag[Igralec.ČRNI.ordinal()]++;
-	            } else if (stanje == Stanje.ZMAGA_BELI) {
-	                steviloZmag[Igralec.BELI.ordinal()]++;
-	            }
-
-	            // Update the evaluation
-	            int rezultat = steviloZmag[Igralec.ČRNI.ordinal()] - steviloZmag[Igralec.BELI.ordinal()];
-	            ocenjevanje += rezultat;
-	        }
-
-	        ocenjevanje /= stSimulacij; // Average the outcomes
-
-	        // Choose the move with the highest average outcome
-	        if (ocenjevanje > najboljseOcenjevanje) {
-	            najboljseOcenjevanje = ocenjevanje;
-	            najboljsaPoteza = poteza;
-	        }
-	    }
-
-	    long konec = System.currentTimeMillis();
-	    long trajanje = konec - zacetek;
-	    System.out.println("Potezo sem iskal: " + trajanje + " milisekund");
-
-	    return najboljsaPoteza;
+	public Poteza izberiPotezo(Igra igraOg) {
+		Igra igra = igraOg.kopija(); //naredimo kopijo igre
+		Igralec igralec = igra.naPotezi;
+		Poteza zmagovalna = null;
+		long endTime = System.currentTimeMillis() + 5000; // Za potezo ima 5s
+		Igralec nasprotnik = igralec.nasprotnik();
+		Drevo drevo = new Drevo(new Vozel(igra)); //ustvarimo novo drevo in damo trenuten vozel za koren
+		Vozel korenVozel = drevo.dobiKoren();
+		korenVozel.dobiState().nastaviIgra(igra);
+		korenVozel.nastaviIgralec(igralec);
+		Random random = new Random();
+		while (System.currentTimeMillis() < endTime) {
+			Vozel promisingVozel = izberiObetavenVozel(korenVozel);
+			if (promisingVozel.getStanje() == Stanje.V_TEKU) {
+				podaljsajVozel(promisingVozel);
+			}
+			Vozel vozelZaRaziskat = promisingVozel;
+			if (promisingVozel.dobiOtroke().size() > 0) {
+				vozelZaRaziskat = promisingVozel.dobiOtroke().get(random.nextInt(promisingVozel.dobiOtroke().size()));
+			}
+			List<String> rezultati = odigrajVzporedneIgre(vozelZaRaziskat, igralec);
+			for (int l = 0; l < 10; l++) {
+				String rezultatIgre = rezultati.get(l);
+				pogledNazaj(vozelZaRaziskat, rezultatIgre);
+			}
+		}
+		Vozel zmagovalniVozel = korenVozel.getNajboljsiOtrok();
+		drevo.nastaviKoren(zmagovalniVozel);
+		Polje originalPolje = igra.dobiPolje();
+		Polje updatedPolje = zmagovalniVozel.dobiPolje();
+		for (int i = 1; i < igra.velikostPlosce + 1; i++) {
+			for (int j = 1; j < igra.velikostPlosce + 1; j++) {
+				if (originalPolje.grid[i][j] == null && updatedPolje.grid[i][j] != null) {
+					zmagovalna = new Poteza(i, j);
+				}
+			}
+		}
+		return zmagovalna;
 	}
-    private Vozel selectPromisingVozel(Vozel rootVozel) {
-        Vozel node = rootVozel;
-        while (!node.otroci.isEmpty()) {
-            node = UCT.findBestVozelWithUCT(node);
-        }
-        return node;
-    }
 
-    private void expandVozel(Vozel node) {
-        List<Poteza> possibleStates = node.getIgra().moznePoteze();
-        possibleStates.forEach(poteza -> {
-        	Igra novaIgra = node.getIgra().kopija();
-        	novaIgra.odigraj(poteza);
-            Vozel newVozel = new Vozel(novaIgra);
-            newVozel.stars = node;
-            node.otroci.add(newVozel);
-        });
-    }
+	private Vozel izberiObetavenVozel(Vozel korenVozel) {
+		Vozel vozel = korenVozel;
+		while (!vozel.otroci.isEmpty()) {
+			vozel = UCT.najdiNajboljsiVozelUCT(vozel);
+		}
+		return vozel;
+	}
 
-    private void backPropagation(Vozel nodeToExplore, String rezultat) {
-        Vozel tempVozel = nodeToExplore;
-        State tempState = tempVozel.getState();
-        Stanje boardStatus = tempState.getStanje();
-        while (tempVozel != null) {
-            tempVozel.state.visitCount++;
-            if (rezultat != null && rezultat.equals("zmaga")) {
-                tempVozel.state.addWinScore(1);
-            }
-            tempVozel = tempVozel.getStars();
-        }
-    }
+	private void podaljsajVozel(Vozel vozel) {
+		List<Poteza> moznaStanja = vozel.dobiIgro().moznePoteze();
+		moznaStanja.forEach(poteza -> {
+			Igra novaIgra = vozel.dobiIgro().kopija();
+			novaIgra.odigraj(poteza);
+			Vozel newVozel = new Vozel(novaIgra);
+			newVozel.stars = vozel;
+			vozel.otroci.add(newVozel);
+		});
+	}
 
-    private String simulateRandomPlayout(Vozel node, Igralec igralec) {
-    	Igralec nasprotnik = igralec.nasprotnik();
-        Vozel tempVozel = node.kopija();
-        //tempVozel.igra.polje.printGrid();
-        Stanje boardStatus = tempVozel.getStanje();
-        String rezultat = null;
+	private void pogledNazaj(Vozel vozelZaRaziskat, String rezultat) {
+		Vozel zacasenVozel = vozelZaRaziskat;
+		while (zacasenVozel != null) {
+			zacasenVozel.state.steviloObiskov++;
+			if (rezultat != null && rezultat.equals("zmaga")) {
+				zacasenVozel.state.dodajSteviloZmag(1);
+			}
+			zacasenVozel = zacasenVozel.dobiStarsa();
+		}
+	}
 
-        while (boardStatus==Stanje.V_TEKU) {
-        	tempVozel.igra.odigrajNakljucnoPotezo();
-        	boardStatus = tempVozel.igra.dobiStanje();
-        }
-        //tempVozel.igra.polje.printGrid();
-        if ((boardStatus == Stanje.ZMAGA_BELI && nasprotnik == Igralec.BELI) || (boardStatus == Stanje.ZMAGA_CRNI && nasprotnik == Igralec.ČRNI)) {
-        	//tempVozel.getStars().getState().setWinScore(Integer.MIN_VALUE);
-        	rezultat = "poraz";
-        }
-        else rezultat = "zmaga";
-        return rezultat;
-    }
-    public List<String> runParallelPlayouts(Vozel node, Igralec igralec) {
-        int numPlayouts = 10; // Number of playouts to execute
-        ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
-        List<Future<String>> results = new ArrayList<>();
+	private String simulirajNakljucnoIgro(Vozel vozel, Igralec igralec) {
+		Igralec nasprotnik = igralec.nasprotnik();
+		Vozel zacasenVozel = vozel.kopija();
+		Stanje boardStatus = zacasenVozel.getStanje();
+		String rezultat = null;
 
-        for (int i = 0; i < numPlayouts; i++) {
-            Future<String> result = (Future<String>) executor.submit(() -> simulateRandomPlayout(node, igralec));
-            results.add(result);
-        }
+		while (boardStatus == Stanje.V_TEKU) {
+			zacasenVozel.igra.odigrajNakljucnoPotezo();
+			boardStatus = zacasenVozel.igra.dobiStanje();
+		}
+		if ((boardStatus == Stanje.ZMAGA_BELI && nasprotnik == Igralec.BELI)
+				|| (boardStatus == Stanje.ZMAGA_CRNI && nasprotnik == Igralec.ČRNI)) {
+			rezultat = "poraz";
+		} else
+			rezultat = "zmaga";
+		return rezultat;
+	}
 
-        // Wait for all playouts to complete
-        executor.shutdown();
-        while (!executor.isTerminated()) {
-            // Waiting for all tasks to finish
-        }
+	public List<String> odigrajVzporedneIgre(Vozel vozel, Igralec igralec) {
+		int steviloIger = 10; 
+		ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+		List<Future<String>> results = new ArrayList<>();
 
-        // Process the results
-        for (Future<String> result : results) {
-            try {
-                // Process the result as needed
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        List<String> playoutResults = new ArrayList<>();
-        for (Future<String> result : results) {
-            try {
-                String playoutResult = result.get();
-                playoutResults.add(playoutResult);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return playoutResults;
-    }
-   
+		for (int i = 0; i < steviloIger; i++) {
+			Future<String> result = (Future<String>) executor.submit(() -> simulirajNakljucnoIgro(vozel, igralec));
+			results.add(result);
+		}
 
-
-
-
-
-
-	
-	
-
+		// Pocakamo da se igre zakljucijo
+		executor.shutdown();
+		while (!executor.isTerminated()) {
+			// Pocakamo da se vsi taski zaklucijo
+		}
+		List<String> rezultatiIger = new ArrayList<>();
+		for (Future<String> result : results) {
+			try {
+				String rezultatIgre = result.get();
+				rezultatiIger.add(rezultatIgre);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return rezultatiIger;
+	}
 
 	public class Vozel {
-	    Igra igra;
-	    Vozel stars;
-	    List<Vozel> otroci;
-	    State state;
-	    Igralec naVrsti;
+		Igra igra;
+		Vozel stars;
+		List<Vozel> otroci;
+		State state;
+		Igralec naVrsti;
 
-	    public Vozel(Igra igra) {
-	        this.igra = igra;
-	        this.otroci = new ArrayList<>();
-	        this.state = new State(igra);
-	    }
-	    
-	    public void odigrajNakljucnoPotezoNaVozlu() {
-	    	igra.odigrajNakljucnoPotezo();
-	    	
-	    }
-	    
-	    public void setIgralec(Igralec igralec) {
-	    	this.naVrsti = igralec;
-	    }
-	    
-	    public State getState() {
-	    	return state;
-	    }
-	    
-	    public void setState(State state) {
-	    	this.state = state;
-	    }
+		public Vozel(Igra igra) {
+			this.igra = igra;
+			this.otroci = new ArrayList<>();
+			this.state = new State(igra);
+		}
 
-	    public Stanje getStanje() {
-	    	return igra.stanje;
-	    }
-	    
-	    public void setStanje(Stanje stanje) {
-	    	this.igra.stanje = stanje;
-	    }
-	    
-	    public List<Vozel> getOtroci() {
-	    	return otroci;
-	    }
-	    
-	    public Vozel getStars() {
-	    	return stars;
-	    }
-	    
-	    public Polje getPolje() {
-	    	return igra.polje;
-	    }
-	    
-	    public void setPolje(Polje polje) {
-	    	this.igra.polje = polje;
-	    }
-	    
-	    public Igra getIgra() {
-	    	return igra;
-	    }
-	    
-	    public void setIgra(Igra igra) {
-	    	this.igra = igra;
-	    }
-	    public Vozel kopija() {
-	    	Vozel kopija = new Vozel(igra.kopija());
-	    	kopija.otroci = otroci;
-	    	kopija.stars = stars;
-	    	kopija.state = state;
-	    	return kopija;
-	    }
-	    
-	    public Vozel getNajboljsiOtrok() {
-	    	int najboljsi = 0;
-	    	for (int i =0; i< otroci.size();i++) {
-	    		if(otroci.get(i).state.winScore >  otroci.get(najboljsi).state.winScore) {
-	    			najboljsi = i;
-	    		}
-	    	}
-	    	return otroci.get(najboljsi);
-	    }
-	    // Setters and getters
+		public void odigrajNakljucnoPotezoNaVozlu() {
+			igra.odigrajNakljucnoPotezo();
+
+		}
+
+		public void nastaviIgralec(Igralec igralec) {
+			this.naVrsti = igralec;
+		}
+
+		public State dobiState() {
+			return state;
+		}
+
+		public void nastaviState(State state) {
+			this.state = state;
+		}
+
+		public Stanje getStanje() {
+			return igra.stanje;
+		}
+
+		public void nastaviStanje(Stanje stanje) {
+			this.igra.stanje = stanje;
+		}
+
+		public List<Vozel> dobiOtroke() {
+			return otroci;
+		}
+
+		public Vozel dobiStarsa() {
+			return stars;
+		}
+
+		public Polje dobiPolje() {
+			return igra.polje;
+		}
+
+		public void nastaviPolje(Polje polje) {
+			this.igra.polje = polje;
+		}
+
+		public Igra dobiIgro() {
+			return igra;
+		}
+
+		public void nastaviIgra(Igra igra) {
+			this.igra = igra;
+		}
+
+		public Vozel kopija() {
+			Vozel kopija = new Vozel(igra.kopija());
+			kopija.otroci = otroci;
+			kopija.stars = stars;
+			kopija.state = state;
+			return kopija;
+		}
+
+		public Vozel getNajboljsiOtrok() {
+			int najboljsi = 0;
+			for (int i = 0; i < otroci.size(); i++) {
+				if (otroci.get(i).state.steviloZmag > otroci.get(najboljsi).state.steviloZmag) {
+					najboljsi = i;
+				}
+			}
+			return otroci.get(najboljsi);
+		}
 	}
 
 	public class Drevo {
-	    Vozel koren;
+		Vozel koren;
 
-	    public Drevo(Vozel koren) {
-	    	this.koren = koren;
+		public Drevo(Vozel koren) {
+			this.koren = koren;
 		}
 
 		public Vozel dobiKoren() {
-	        return koren;
-	    }
+			return koren;
+		}
 
-	    public void nastaviKoren(Vozel koren) {
-	        this.koren = koren;
-	    }
+		public void nastaviKoren(Vozel koren) {
+			this.koren = koren;
+		}
 	}
 
 	public class State {
-	    Igra igra;
-	    Igralec igralecNaVrsti;
-	    int visitCount;
-	    double winScore;
+		Igra igra;
+		Igralec igralecNaVrsti;
+		int steviloObiskov;
+		double steviloZmag;
 
-	    public State(Igra igra) {
-	        this.igra= igra;
-	        this.igralecNaVrsti = igra.naPotezi;
-	        this.visitCount = 0;
-	        this.winScore = 0;
-	    }
+		public State(Igra igra) {
+			this.igra = igra;
+			this.igralecNaVrsti = igra.naPotezi;
+			this.steviloObiskov = 0;
+			this.steviloZmag = 0;
+		}
 
-	    public State(Igra igra, Igralec igralecNaVrsti, int visitCount, double winScore) {
-	        this.igra.polje = igra.polje;
-	        this.igralecNaVrsti = igralecNaVrsti;
-	        this.visitCount = visitCount;
-	        this.winScore = winScore;
-	    }
-	    
-	    public Stanje getStanje() {
-	    	return igra.stanje;
-	    }
-	    
-	    public Igra getIgra() {
-	    	return igra;
-	    }
-	    
-	    public void setIgra(Igra igra) {
-	    	this.igra = igra;
-	    }
-	    
-	    public Igralec getIgralecNaVrsti() {
-	    	return igralecNaVrsti;
-	    }
-	    
-	    public void nastaviIgralecNaVrsti(Igralec igralec) {
-	    	this.igralecNaVrsti = igralec;
-	    }
-	    
-	    public int getVisitCount() {
-	    	return visitCount;
-	    }
-	    
-	    public void setVisitCount(int i) {
-	    	this.visitCount = i;
-	    }
-	    
-	    public void setWinScore(double i) {
-	    	this.winScore = i;
-	    }
-	    
-	    public double getWinScore() {
-	    	return winScore;
-	    }
+		public State(Igra igra, Igralec igralecNaVrsti, int steviloObiskov, double steviloZmag) {
+			this.igra.polje = igra.polje;
+			this.igralecNaVrsti = igralecNaVrsti;
+			this.steviloObiskov = steviloObiskov;
+			this.steviloZmag = steviloZmag;
+		}
 
-	    public void addWinScore(double i) {
-	    	this.winScore += i;
-	    }
-	    // Getters and setters
+		public Stanje getStanje() {
+			return igra.stanje;
+		}
 
-	    public List<State> getAllPossibleStates() {
-	        List<State> possibleStates = new ArrayList<>();
-	        List<Poteza> emptyPositions = igra.moznePoteze();
-	        
-	        for (Poteza poteza : emptyPositions) {
-	            Igra novaIgra = igra;
-	            novaIgra.odigraj(poteza);
-	            State novoStanje = new State(novaIgra, novaIgra.naPotezi,0,0);
-	            possibleStates.add(novoStanje);
-	        }
-	        
-	        return possibleStates;
-	    }
+		public Igra dobiIgro() {
+			return igra;
+		}
 
-	    public void randomPlay() {
-	        igra.odigrajNakljucnoPotezo();
-	    }
+		public void nastaviIgra(Igra igra) {
+			this.igra = igra;
+		}
+
+		public Igralec dobiIgrolecNaVrsti() {
+			return igralecNaVrsti;
+		}
+
+		public void nastaviIgralecNaVrsti(Igralec igralec) {
+			this.igralecNaVrsti = igralec;
+		}
+
+		public int dobiSteviloObiskov() {
+			return steviloObiskov;
+		}
+
+		public void nastaviSteviloObiskov(int i) {
+			this.steviloObiskov = i;
+		}
+
+		public void nastaviSteviloZmag(double i) {
+			this.steviloZmag = i;
+		}
+
+		public double dobiSteviloZmag() {
+			return steviloZmag;
+		}
+
+		public void dodajSteviloZmag(double i) {
+			this.steviloZmag += i;
+		}
+
+		public List<State> dobiVsaMoznaStanja() {
+			List<State> moznaStanja = new ArrayList<>();
+			List<Poteza> praznaPolja = igra.moznePoteze();
+
+			for (Poteza poteza : praznaPolja) {
+				Igra novaIgra = igra;
+				novaIgra.odigraj(poteza);
+				State novoStanje = new State(novaIgra, novaIgra.naPotezi, 0, 0);
+				moznaStanja.add(novoStanje);
+			}
+
+			return moznaStanja;
+		}
 	}
 
-
 	public class UCT {
-	    public static double uctValue(int totalVisit, double nodeWinScore, int nodeVisit) {
-	        if (nodeVisit == 0) {
-	            return Integer.MAX_VALUE;
-	        }
-	        return ((double) nodeWinScore / (double) nodeVisit) +
-	                1.41 * Math.sqrt(Math.log(totalVisit) / (double) nodeVisit);
-	    }
+		public static double uctVrednost(int steviloVsehObiskov, double vozelSteviloZmag, int vozelSteviloObiskov) {
+			if (vozelSteviloObiskov == 0) {
+				return Integer.MAX_VALUE;
+			}
+			return ((double) vozelSteviloZmag / (double) vozelSteviloObiskov)
+					+ 1.41 * Math.sqrt(Math.log(steviloVsehObiskov) / (double) vozelSteviloObiskov);
+		}
 
-	    public static Vozel findBestVozelWithUCT(Vozel node) {
-	        int parentVisit = node.state.visitCount;
-	        return Collections.max(
-	          node.otroci,
-	          Comparator.comparing(c -> uctValue(parentVisit, 
-	            c.state.winScore, c.state.visitCount)));
-	    }
+		public static Vozel najdiNajboljsiVozelUCT(Vozel vozel) {
+			int starsObiski = vozel.state.steviloObiskov;
+			return Collections.max(vozel.otroci,
+					Comparator.comparing(c -> uctVrednost(starsObiski, c.state.steviloZmag, c.state.steviloObiskov)));
+		}
 
-	 
-	
-}
-
+	}
 
 }
-
-
