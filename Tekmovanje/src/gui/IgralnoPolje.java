@@ -36,11 +36,6 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 	protected Stroke debelinaRoba;
 	protected double polmer;
 	protected double premer;
-	// public int Vodja.igra.velikostPlosce = Igra.Vodja.igra.velikostPlosce;
-	// public Igralec naPotezi = Igra.naPotezi;
-	// public static Stanje stanje = Stanje.V_TEKU;
-	// private static int steviloPotez = Igra.steviloPotez;
-	// protected Polje polje = Igra.polje;
 	public static JLabel naVrsti = new JLabel("");
 
 	private final static double SIRINA_CRTE = 0.08;

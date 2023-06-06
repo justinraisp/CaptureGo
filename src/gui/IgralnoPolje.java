@@ -67,6 +67,9 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 	}
 
 	public static void napisNaVrsti(Igralec igralec) {
+		if (igralec == null) {
+			naVrsti.setText("Izberite vrsto igre");
+		}
 		if (Vodja.igra.stanje == Stanje.ZMAGA_BELI) {
 			naVrsti.setText("Zmagal je drugi igralec!");
 		} else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI) {
@@ -211,13 +214,11 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 			Point clickedPoint = e.getPoint();
 			for (Point presecisce : presecisca) {
 				double distance = clickedPoint.distance(presecisce);
-				// Draw a filled oval at the intersection point
 				if (distance < polovica) {
 					int x = (int) (1 + (presecisce.x - odmikSirina) / w);
 					int y = (int) (1 + (presecisce.y - odmikVisina) / w);
 					Poteza updated = new Poteza(x, y);
 					Vodja.igrajClovekovoPotezo(updated);
-					// steviloPotez += 1;
 				}
 			}
 			napisNaVrsti(Vodja.igra.naPotezi);

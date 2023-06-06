@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.SwingWorker;
 import java.util.concurrent.TimeUnit;
 
+import gui.IgralnoPolje;
 import gui.Okno;
 import inteligenca.Inteligenca;
 import logika.*;
@@ -26,13 +27,12 @@ public class Vodja {
 
 	public static void igramoNovoIgro() {
 		igra = new Igra();
+		Igralec igralec = igra.naPotezi();
+		IgralnoPolje.napisNaVrsti(igralec);
 		igramo();
 	}
 
 	public static void igramo() {
-		// Poteza poteza = null;
-		// okno.osveziGUI();
-
 		switch (igra.dobiStanje()) {
 		case ZMAGA_BELI:
 			break;
@@ -53,14 +53,12 @@ public class Vodja {
 				break;
 			}
 		}
-		// okno.osveziGUI();
 	}
 
 	private static Random random = new Random();
 
 	public static void igrajRacunalnikovoPotezo(Poteza poteza) {
 		if (poteza != null && igra.odigraj(poteza)) {
-			// igra.odigraj(poteza);
 			clovekNaVrsti = true;
 			igramo();
 		}
@@ -68,7 +66,6 @@ public class Vodja {
 
 	public static void igrajClovekovoPotezo(Poteza poteza) {
 		if (poteza != null && igra.odigraj(poteza)) {
-			// igra.odigraj(poteza);
 			clovekNaVrsti = false;
 			igramo();
 		}
