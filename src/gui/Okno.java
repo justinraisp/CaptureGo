@@ -2,11 +2,13 @@ package gui;
 
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.EnumMap;
 
+import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -39,7 +41,7 @@ public class Okno extends JFrame implements ActionListener{
 	private JMenuItem menuOdpri, menuShrani, menuKoncaj;
 	private JMenuItem menuVelikostPlosce;
 	private JMenuItem menuBarvaPrvega, menuBarvaDrugega, menuBarvaRoba;
-	
+	private JButton passGumb;
 	private JLabel naVrsti;
 	
 	public Okno() {
@@ -76,9 +78,12 @@ public class Okno extends JFrame implements ActionListener{
 		
 		naVrsti = new JLabel();
 		
-		
-		
+		passGumb = new JButton("Pass");
+		passGumb.addActionListener(this);
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+        add(passGumb, "North");
 	}
 	
 	private JMenu dodajMenu(JMenuBar menubar, String naslov) {
@@ -174,6 +179,8 @@ public class Okno extends JFrame implements ActionListener{
 			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
 			Vodja.igramoNovoIgro();
 			
+		} else if(objekt == passGumb) {
+			//TODO Vodja.pass();
 		}
 		repaint();
 	}

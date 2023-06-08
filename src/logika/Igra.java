@@ -17,7 +17,7 @@ import splosno.Poteza;
 public class Igra {
 
 	// tu se mora ustvariti nova igra
-	public static int velikostPlosce = 9;
+	public static int velikostPlosce = 19;
 
 	// mozne poteze
 

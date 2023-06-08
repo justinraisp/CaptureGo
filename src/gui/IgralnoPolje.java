@@ -67,18 +67,15 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 	}
 
 	public static void napisNaVrsti(Igralec igralec) {
-		if (igralec == null) {
-			naVrsti.setText("Izberite vrsto igre");
-		}
 		if (Vodja.igra.stanje == Stanje.ZMAGA_BELI) {
-			naVrsti.setText("Zmagal je drugi igralec!");
+			naVrsti.setText("Zmagal je beli!");
 		} else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI) {
-			naVrsti.setText("Zmagal je prvi igralec!");
+			naVrsti.setText("Zmagal je črni!");
 		} else {
 			if (igralec == Igralec.ČRNI) {
-				naVrsti.setText("Na vrsti je prvi igralec");
+				naVrsti.setText("Na vrsti je črni");
 			} else
-				naVrsti.setText("Na vrsti je drugi igralec");
+				naVrsti.setText("Na vrsti je beli");
 		}
 	}
 
@@ -146,6 +143,9 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 				}
 			}
 		}
+		else {
+			naVrsti.setText("Izberite vrsto igre");
+		}
 	}
 
 	public List<Point> izracunajPresecisca() {
@@ -160,12 +160,10 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 
 			for (int j = 1; j < Vodja.igra.velikostPlosce + 1; j++) {
 				int y = (int) (j * w + odmikVisina - polovica);
-
 				Point presecisce = new Point(x, y);
 				presecisca.add(presecisce);
 			}
 		}
-
 		return presecisca;
 	}
 
