@@ -87,4 +87,19 @@ public class Vodja {
 	        });
 	    }
 	}
+	public static void pass() {
+	    if (clovekNaVrsti) {
+	        igra.pass();
+	        clovekNaVrsti = false;
+	        SwingUtilities.invokeLater(() -> {
+	            // Delay the board refresh to allow the UI to update
+	            try {
+	                TimeUnit.MILLISECONDS.sleep(500); // Adjust the delay as needed
+	            } catch (InterruptedException e) {
+	                e.printStackTrace();
+	            }
+	            igramo();
+	        });
+	    }
+	}
 }

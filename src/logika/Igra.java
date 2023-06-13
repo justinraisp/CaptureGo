@@ -81,13 +81,23 @@ public class Igra {
 				}
 			}
 		}
+		prostaPolja.add(new Poteza(-1,-1)); //dodamo potezo za pass
 		return prostaPolja;
+	}
+	
+	public void pass() {
+		naPotezi = naPotezi.nasprotnik();
 	}
 
 	public boolean odigraj(Poteza poteza) {
 		Zeton zeton;
 		int x = poteza.x();
 		int y = poteza.y();
+		
+	    if (x == -1 && y == -1) {
+	        pass();
+	        return true;
+	    }
 		if (naPotezi == Igralec.ČRNI)
 			zeton = Zeton.CRNI;
 		else
@@ -112,6 +122,7 @@ public class Igra {
 		// System.out.println(moznePoteze());
 		return true;
 	}
+	    
 
 	public boolean jeVeljavnaPoteza(int x, int y) {
 		// Pogledamo, če so koordinate veljavne in je prazno polje
@@ -175,7 +186,7 @@ public class Igra {
 		if (prostaPolja.isEmpty()) {
 			return false; // Ni moznih potez
 		}
-		if (polje.isCaptured(x, y)) {
+		if (x!= -1 && polje.isCaptured(x, y)) {
 			if (zeton == Zeton.CRNI) {
 				stanje = Stanje.ZMAGA_CRNI;
 			} else {

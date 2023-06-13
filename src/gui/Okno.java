@@ -180,7 +180,8 @@ public class Okno extends JFrame implements ActionListener{
 			Vodja.igramoNovoIgro();
 			
 		} else if(objekt == passGumb) {
-			//TODO Vodja.pass();
+			Vodja.pass();
+			IgralnoPolje.napisNaVrsti(Vodja.igra.naPotezi);
 		}
 		repaint();
 	}
