@@ -9,7 +9,7 @@ public class CaptureGo {
 		okno.pack();
 		okno.setVisible(true);
 		Okno glavno_okno = null;
-		Vodja.okno = glavno_okno;
+		Vodja.okno = okno;
 
 	}
 }

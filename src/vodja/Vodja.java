@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.Map;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import java.util.concurrent.TimeUnit;
 
@@ -33,42 +34,57 @@ public class Vodja {
 	}
 
 	public static void igramo() {
-		switch (igra.dobiStanje()) {
-		case ZMAGA_BELI:
-			break;
-		case ZMAGA_CRNI:
-			break;
-		case V_TEKU:
-			Igralec igralec = igra.naPotezi();
-			VrstaIgralca vrstaNaPotezi = vrstaIgralca.get(igralec);
-			switch (vrstaNaPotezi) {
-			case C:
-				clovekNaVrsti = true;
-				break;
-			case R:
-				// Poteza poteza = inteligenca.izberiPotezo(igra);
-				Poteza poteza = inteligenca.izberiPotezo(igra);
-				System.out.println(poteza);
-				igrajRacunalnikovoPotezo(poteza);
-				break;
-			}
-		}
+	    switch (igra.dobiStanje()) {
+	        case ZMAGA_BELI:
+	            break;
+	        case ZMAGA_CRNI:
+	            break;
+	        case V_TEKU:
+	            Igralec igralec = igra.naPotezi();
+	            VrstaIgralca vrstaNaPotezi = vrstaIgralca.get(igralec);
+	            switch (vrstaNaPotezi) {
+	                case C:
+	                    clovekNaVrsti = true;
+	                    break;
+	                case R:
+	                    SwingUtilities.invokeLater(() -> {
+	                        Poteza poteza = inteligenca.izberiPotezo(igra);
+	                        igrajRacunalnikovoPotezo(poteza);
+	                    });
+	                    break;
+	            }
+	            break;
+	    }
 	}
 
-	private static Random random = new Random();
-
 	public static void igrajRacunalnikovoPotezo(Poteza poteza) {
-		if (poteza != null && igra.odigraj(poteza)) {
-			clovekNaVrsti = true;
-			igramo();
-		}
+	    if (poteza != null && igra.odigraj(poteza)) {
+	        clovekNaVrsti = true;
+	        SwingUtilities.invokeLater(() -> {
+	            // Delay the board refresh to allow the UI to update
+	            try {
+	                TimeUnit.MILLISECONDS.sleep(500); // Adjust the delay as needed
+	            } catch (InterruptedException e) {
+	                e.printStackTrace();
+	            }
+	            igramo();
+	            okno.repaint();
+	        });
+	    }
 	}
 
 	public static void igrajClovekovoPotezo(Poteza poteza) {
-		if (poteza != null && igra.odigraj(poteza)) {
-			clovekNaVrsti = false;
-			igramo();
-		}
+	    if (poteza != null && igra.odigraj(poteza)) {
+	        clovekNaVrsti = false;
+	        SwingUtilities.invokeLater(() -> {
+	            // Delay the board refresh to allow the UI to update
+	            try {
+	                TimeUnit.MILLISECONDS.sleep(500); // Adjust the delay as needed
+	            } catch (InterruptedException e) {
+	                e.printStackTrace();
+	            }
+	            igramo();
+	        });
+	    }
 	}
-
 }

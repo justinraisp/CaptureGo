@@ -204,6 +204,7 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (Vodja.igra != null && Vodja.igra.stanje == Stanje.V_TEKU) {
+			Poteza updated = null;
 			int w = sirinaKvadrata();
 			int odmikSirina = (getWidth() - (Vodja.igra.velikostPlosce * w)) / 2;
 			int odmikVisina = (getHeight() - (Vodja.igra.velikostPlosce * w)) / 2;
@@ -215,10 +216,10 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 				if (distance < polovica) {
 					int x = (int) (1 + (presecisce.x - odmikSirina) / w);
 					int y = (int) (1 + (presecisce.y - odmikVisina) / w);
-					Poteza updated = new Poteza(x, y);
-					Vodja.igrajClovekovoPotezo(updated);
+					updated = new Poteza(x, y);
 				}
 			}
+			Vodja.igrajClovekovoPotezo(updated);
 			napisNaVrsti(Vodja.igra.naPotezi);
 			repaint();
 		}
