@@ -88,6 +88,14 @@ public class Igra {
 	public void pass() {
 		naPotezi = naPotezi.nasprotnik();
 	}
+	
+	public void concede() {
+	    if (naPotezi == Igralec.ČRNI) {
+	        stanje = Stanje.ZMAGA_BELI;
+	    } else {
+	        stanje = Stanje.ZMAGA_CRNI;
+	    }
+	}
 
 	public boolean odigraj(Poteza poteza) {
 		Zeton zeton;
@@ -131,10 +139,9 @@ public class Igra {
 			return false;
 		}
 
-		// Zaenkrat dovoljen samomor
-		// if (isKoRuleViolation(x, y)) {
-		// return false;
-		// }
+		 if (isKoRuleViolation(x, y)) {
+		 return false;
+		 }
 
 		// Postavimo kamen in pogledamo, če je ujet
 		polje.grid[x][y] = igralec;

@@ -28,6 +28,10 @@ public class Polje {
 			return false;
 		return true;
 	}
+	
+	public void odstraniZeton(int x, int y) {
+		grid[x][y] = null;
+	}
 
 	public void printGrid() {
 		for (int x = 1; x <= size; x++) {
