@@ -24,7 +24,7 @@ public class Inteligenca extends KdoIgra {
 		Igra igra = igraOg.kopija(); //naredimo kopijo igre
 		Igralec igralec = igra.naPotezi;
 		Poteza zmagovalna = null;
-		long endTime = System.currentTimeMillis() + 5000; // Za potezo ima 5s
+		long endTime = System.currentTimeMillis() + 1000; // Za potezo ima 5s
 		Igralec nasprotnik = igralec.nasprotnik();
 		Drevo drevo = new Drevo(new Vozel(igra)); //ustvarimo novo drevo in damo trenuten vozel za koren
 		Vozel korenVozel = drevo.dobiKoren();
@@ -43,6 +43,7 @@ public class Inteligenca extends KdoIgra {
 			List<String> rezultati = odigrajVzporedneIgre(vozelZaRaziskat, igralec);
 			for (int l = 0; l < 10; l++) {
 				String rezultatIgre = rezultati.get(l);
+				System.out.println(rezultatIgre);
 				pogledNazaj(vozelZaRaziskat, rezultatIgre);
 			}
 		}
@@ -57,6 +58,7 @@ public class Inteligenca extends KdoIgra {
 				}
 			}
 		}
+		System.out.println(zmagovalna);
 		return zmagovalna;
 	}
 

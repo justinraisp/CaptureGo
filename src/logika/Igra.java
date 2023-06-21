@@ -6,9 +6,12 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
@@ -21,6 +24,8 @@ public class Igra {
 	// tu se mora ustvariti nova igra
 	public static int velikostPlosce = 19;
 
+	public int crniTocke;
+	public int beliTocke;
 	// mozne poteze
 
 	// igralno polje
@@ -38,6 +43,8 @@ public class Igra {
 		int N = velikostPlosce;
 		polje = new Polje(N);
 		stanje = Stanje.V_TEKU;
+		crniTocke = 0;
+		beliTocke = 5; //kompenzacija, ker zacne kasneje
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				polje.grid[i][j] = null;
@@ -105,6 +112,7 @@ public class Igra {
 	    } else {
 	        stanje = Stanje.ZMAGA_CRNI;
 	    }
+	    System.out.println(calculateScore(polje));
 	}
 
 	public boolean odigraj(Poteza poteza) {
@@ -131,7 +139,6 @@ public class Igra {
 		naPotezi = naPotezi.nasprotnik();
 		polje.odstraniUjeteZetone();
 		if(semi) polje.dodajZeton(x, y, zeton); //ce je semiSuicide je treba se enkrat dodat kamen, drugace ga tretira kot ujetega
-		//prejsnjaStanja.add(polje);
 		// Preverimo, če je kateri od igralcev ujel nasprotnikov kamen, uporabljali za capturego
 		//if (polje.polje.isCaptured(x, y)) {
 		//	if (zeton == Zeton.CRNI) {
@@ -162,10 +169,8 @@ public class Igra {
 	}
 	
 
-	public Set<Point> identifyGroup(int x, int y, Polje polje) {
-	    Zeton player = polje.grid[x][y];
+	public Set<Point> identifyGroup(int x, int y, Zeton player, Set<Point> visited, Polje polje) {
 	    Set<Point> group = new HashSet<>(); // Set to store the group of stones
-	    Set<Point> visited = new HashSet<>(); // Set to keep track of visited intersections
 
 	    // Call the DFS method to identify the group
 	    dfs(x, y, player, group, visited, polje);
@@ -174,33 +179,32 @@ public class Igra {
 	}
 
 	private void dfs(int x, int y, Zeton player, Set<Point> group, Set<Point> visited, Polje polje) {
-	    // Check if the current intersection is outside the board or has a different player's stone
-	    if (x < 0 || x >= velikostPlosce || y < 0 || y >= velikostPlosce || polje.grid[x][y] != player) {
+	    if (x < 1 || x > velikostPlosce || y < 1 || y > velikostPlosce || visited.contains(new Point(x, y))) {
 	        return;
 	    }
 
 	    Point current = new Point(x, y);
 
-	    // Check if the current intersection has already been visited
-	    if (visited.contains(current)) {
+	    if (polje.grid[x][y] != player) {
+	        visited.add(current);
 	        return;
 	    }
 
 	    visited.add(current);
 	    group.add(current);
 
-	    // Recursively check the neighboring intersections
-	    dfs(x - 1, y, player, group, visited,polje); // Check left
-	    dfs(x + 1, y, player, group, visited,polje); // Check right
-	    dfs(x, y - 1, player, group, visited,polje); // Check up
-	    dfs(x, y + 1, player, group, visited,polje); // Check down
+	    dfs(x - 1, y, player, group, visited, polje);
+	    dfs(x + 1, y, player, group, visited, polje);
+	    dfs(x, y - 1, player, group, visited, polje);
+	    dfs(x, y + 1, player, group, visited, polje);
 	}
 	
 	public boolean hasLiberty(int x, int y) {
 		Polje kopija = polje.kopija();
 		Zeton zeton = zetonNaPotezi();
 		kopija.dodajZeton(x, y, zeton);
-	    Set<Point> group = identifyGroup(x, y, kopija);
+		Set<Point> visited = new HashSet<>();
+	    Set<Point> group = identifyGroup(x, y, zeton, visited, kopija);
 	    for (Point stone : group) {
 	        // Check if any neighboring intersection is empty (has null value)
 	        if (hasEmptyNeighbor(stone.x, stone.y)) {
@@ -232,16 +236,16 @@ public class Igra {
 		boolean captureFound = false;
 		Polje kopija = polje.kopija();
 		kopija.dodajZeton(x, y, zetonNaPotezi());
-	    if (kopija.isCaptured(x, y - 1)) {  // Check the stone above
+	    if (y > 1 && kopija.isCaptured(x, y - 1)) {  // Check the stone above
 	        captureFound = true;
 	    }
-	    if (kopija.isCaptured(x, y + 1)) {  // Check the stone below
+	    if (y < velikostPlosce && kopija.isCaptured(x, y + 1)) {  // Check the stone below
 	        captureFound = true;
 	    }
-	    if (kopija.isCaptured(x - 1, y)) {  // Check the stone to the left
+	    if (x > 1 &&kopija.isCaptured(x - 1, y)) {  // Check the stone to the left
 	        captureFound = true;
 	    }
-	    if (kopija.isCaptured(x + 1, y)) {  // Check the stone to the right
+	    if (x < velikostPlosce &&kopija.isCaptured(x + 1, y) ) {  // Check the stone to the right
 	        captureFound = true;
 	    }
 	    return captureFound;
@@ -252,7 +256,6 @@ public class Igra {
 		if (hasLiberty(x,y) || semiSuicide(x,y)) { 
 			return false;
 		}
-		System.out.println("Suicide");
 		return true;
 	}
 	
@@ -265,7 +268,6 @@ public class Igra {
 		trenutnoPolje.odstraniUjeteZetone();
 		if(semi) trenutnoPolje.dodajZeton(x, y, zetonNaPotezi());
 		for (Polje prejsnjePolje: prejsnjaStanja) {
-			System.out.println(prejsnjePolje.grid);
 			if (prejsnjePolje.equals(trenutnoPolje)) {
 				System.out.println("ko");
 				return true;
@@ -320,5 +322,109 @@ public class Igra {
 	public Polje dobiPolje() {
 		return polje;
 	}
+	
+	public Set<Set<Point>> identifyTerritory(Polje polje) {
+	    Set<Set<Point>> territories = new HashSet<>();
+	    Set<Point> visited = new HashSet<>();
 
+	    for (int x = 1; x <= velikostPlosce; x++) {
+	        for (int y = 1; y <= velikostPlosce; y++) {
+	            Point position = new Point(x, y);
+	            if (!visited.contains(position) && polje.grid[x][y] == null) {
+	                Set<Point> territory = identifyGroup(x, y, null, visited, polje);
+	                territories.add(territory);
+	            }
+	        }
+	    }
+	    return territories;
+	}
+	public Map<Zeton, Set<Set<Point>>> getTerritoryOwners(Polje polje) {
+	    Map<Zeton, Set<Set<Point>>> territoryOwners = new HashMap<>();
+	    Set<Set<Point>> territories = identifyTerritory(polje);
+	    
+	    
+	    for (Set<Point> territory : territories) {
+	        Zeton owner = determineTerritoryOwner(territory, polje);
+
+	        if (!territoryOwners.containsKey(owner)) {
+	            territoryOwners.put(owner, new HashSet<>());
+	        }
+	        territoryOwners.get(owner).add(territory);
+	    }
+
+	    return territoryOwners;
+	}
+	
+	private Zeton determineTerritoryOwner(Set<Point> territory, Polje polje) {
+	    Zeton owner = null;
+
+	    for (Point position : territory) {
+	        Set<Zeton> adjacentStones = getAdjacentStones(position, polje);
+
+	        if (adjacentStones.size() == 1) {
+	            owner = adjacentStones.iterator().next();
+	        } else {
+	            owner = null; // Territory has multiple adjacent players' stones, cannot determine ownership
+	            break;
+	        }
+	    }
+
+	    return owner;
+	}
+	private Set<Zeton> getAdjacentStones(Point position, Polje polje) {
+	    int x = position.x;
+	    int y = position.y;
+	    int size = velikostPlosce;
+
+	    Set<Zeton> adjacentStones = new HashSet<>();
+
+	    if (x > 1)
+	        addStone(adjacentStones, polje.grid[x - 1][y]);
+	    if (x < size)
+	        addStone(adjacentStones, polje.grid[x + 1][y]);
+	    if (y > 1)
+	        addStone(adjacentStones, polje.grid[x][y - 1]);
+	    if (y < size)
+	        addStone(adjacentStones, polje.grid[x][y + 1]);
+
+	    return adjacentStones;
+	}
+	
+	private void addStone(Set<Zeton> stones, Zeton stone) {
+	    if (stone != null) {
+	        stones.add(stone);
+	    }
+	}
+	
+	public Map<Zeton, Integer> calculateScore(Polje polje) {
+	    Map<Zeton, Set<Set<Point>>> territoryOwners = getTerritoryOwners(polje);
+	    Map<Zeton, Integer> scores = new HashMap<>();
+	    System.out.println(territoryOwners);
+
+//	    for (Zeton player : Zeton.values()) {
+//	        scores.put(player, 0);
+//	    }
+
+	    for (Entry<Zeton, Set<Set<Point>>> entry : territoryOwners.entrySet()) {
+	        Zeton owner = entry.getKey();
+	        for(Set<Point> territory : entry.getValue()) {
+		        if (owner == Zeton.BELI) {
+		            int territoryScore = territory.size();
+		            beliTocke += territoryScore;
+		        }
+		        if (owner == Zeton.CRNI) {
+		            int territoryScore = territory.size();
+		            crniTocke += territoryScore;
+	        }
+	        }
+	    }
+	    scores.put(Zeton.CRNI, crniTocke);
+	    scores.put(Zeton.BELI, beliTocke);
+
+
+	    return scores;
+	}
+
+	
+	
 }
