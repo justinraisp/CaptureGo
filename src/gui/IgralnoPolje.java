@@ -21,8 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
@@ -42,6 +44,7 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 	// private static int steviloPotez = Igra.steviloPotez;
 	// protected Polje polje = Igra.polje;
 	public static JLabel naVrsti = new JLabel("");
+	private JLabel koViolationLabel;
 
 	private final static double SIRINA_CRTE = 0.08;
 
@@ -63,6 +66,7 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		setFocusable(true);
+		
 
 	}
 
@@ -123,21 +127,21 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 					if (Vodja.igra.polje.grid[i][j] == Zeton.CRNI) {
 						g2.setColor(Color.BLACK);
 						g2.drawOval(round(x - 3 * polmer), round(y - 3 * polmer), (int) premer, (int) premer);
-						if (Vodja.igra.polje.isCaptured(i, j)) {
-							g2.setColor(Color.RED);
-							Vodja.igra.stanje = Stanje.ZMAGA_BELI;
-							napisNaVrsti(Vodja.igra.naPotezi);
-						}
+						//if (Vodja.igra.polje.isCaptured(i, j)) {		Uporabljali za capturego
+						//	g2.setColor(Color.RED);
+						//	Vodja.igra.stanje = Stanje.ZMAGA_BELI;
+						//	napisNaVrsti(Vodja.igra.naPotezi);
+						//}
 						g2.fillOval(round(x - 3 * polmer), round(y - 3 * polmer), (int) premer, (int) premer);
 					} else if (Vodja.igra.polje.grid[i][j] == Zeton.BELI) {
 						g2.setColor(Color.BLACK);
 						g2.drawOval(round(x - 3 * polmer), round(y - 3 * polmer), (int) premer, (int) premer);
 						g2.setColor(Color.WHITE);
-						if (Vodja.igra.polje.isCaptured(i, j)) {
-							g2.setColor(Color.RED);
-							Vodja.igra.stanje = Stanje.ZMAGA_CRNI;
-							napisNaVrsti(Vodja.igra.naPotezi);
-						}
+						//if (Vodja.igra.polje.isCaptured(i, j)) {		Uporabljali za capturego
+						//	g2.setColor(Color.RED);
+						//	Vodja.igra.stanje = Stanje.ZMAGA_CRNI;
+						//	napisNaVrsti(Vodja.igra.naPotezi);
+						//}
 						g2.fillOval(round(x - 3 * polmer), round(y - 3 * polmer), (int) premer, (int) premer);
 					}
 				}
@@ -219,6 +223,7 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 					updated = new Poteza(x, y);
 				}
 			}
+			if(Vodja.igra.isKoRuleViolation(updated.x(), updated.y())) System.out.println("KO");
 			Vodja.igrajClovekovoPotezo(updated);
 			napisNaVrsti(Vodja.igra.naPotezi);
 			repaint();

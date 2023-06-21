@@ -41,6 +41,7 @@ public class Okno extends JFrame implements ActionListener{
 	private JButton passGumb;
 	private JButton concedeGumb;
 	private JLabel naVrsti;
+	private int stevec = 0;
 	
 	public Okno() {
 		super(); // poklciemo konstruktor od jframe
@@ -79,12 +80,15 @@ public class Okno extends JFrame implements ActionListener{
 	}
 	
     private void createPassAndConcedeButton() {
+    	if(stevec == 0) {
         passGumb = new JButton("Pass");
         passGumb.addActionListener(this);
         polje.add(passGumb);
         concedeGumb = new JButton("Concede");
         concedeGumb.addActionListener(this);
         polje.add(concedeGumb);
+        stevec++;
+    	}
     }
 	
 	private JMenu dodajMenu(JMenuBar menubar, String naslov) {
