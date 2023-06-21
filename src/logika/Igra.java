@@ -111,6 +111,7 @@ public class Igra {
 		Zeton zeton;
 		int x = poteza.x();
 		int y = poteza.y();
+		boolean semi = false;
 		
 	    if (x == -1 && y == -1) {
 	        pass();
@@ -124,38 +125,25 @@ public class Igra {
 		if (!jeVeljavnaPoteza(x, y)) {
 			return false;
 		}
-
+		if(semiSuicide(x,y)) semi = true;
 		// Izvedemo potezo
 		polje.dodajZeton(x, y, zeton);
 		naPotezi = naPotezi.nasprotnik();
-		odstraniUjeteZetone();
-
+		polje.odstraniUjeteZetone();
+		if(semi) polje.dodajZeton(x, y, zeton); //ce je semiSuicide je treba se enkrat dodat kamen, drugace ga tretira kot ujetega
+		//prejsnjaStanja.add(polje);
 		// Preverimo, če je kateri od igralcev ujel nasprotnikov kamen, uporabljali za capturego
-		//if (polje.isCaptured(x, y)) {
+		//if (polje.polje.isCaptured(x, y)) {
 		//	if (zeton == Zeton.CRNI) {
 		//		stanje = Stanje.ZMAGA_CRNI;
 		//	} else {
 		//		stanje = Stanje.ZMAGA_BELI;
 		//	}
 		//}
-		System.out.println(identifyGroup(x,y, polje));
+		prejsnjaStanja.add(polje.kopija());
 		return true;
 	}
 	
-	public void odstraniUjeteZetone() {
-		Set<Koordinate> koordinateSet = new HashSet<>();
-	    int N = velikostPlosce;
-	    for (int i = 1; i < N + 1; i++) {
-	        for (int j = 1; j < N + 1; j++) {
-	            if (isCaptured(i, j)) {
-	                 koordinateSet.add(new Koordinate(i,j));
-	            }
-	        }
-	    }
-	    for (Koordinate koordinate : koordinateSet) {
-	    	polje.odstraniZeton(koordinate.getX(), koordinate.getY());
-	    }
-	}
 	    
 
 	public boolean jeVeljavnaPoteza(int x, int y) {
@@ -165,68 +153,14 @@ public class Igra {
 			return false;
 		}
 
-		 if (isKoRuleViolation(x, y) || isSuicideViolation(x,y)) {
-		 return false;
+		 if (isSuicideViolation(x,y) || isKoRuleViolation(x, y) ) {
+			 return false;
 		 }
-
-		polje.dodajZeton(x, y, igralec);
 
 		// Če je poteza veljavna, vrni true
 		return true;
 	}
 	
-	public boolean isCaptured(int x, int y) {
-		Zeton igralec = polje.grid[x][y];
-		Set<Point> obiskane = new HashSet<>(); // obiskana presecisca
-		Queue<Point> vrsta = new LinkedList<>(); // vrsta za bfs
-
-		// dodamo k vrsti
-		vrsta.add(new Point(x, y));
-
-		while (!vrsta.isEmpty()) {
-			Point p = vrsta.poll();
-			// pogledamo ce na preseciscu nasprotnik ali prazno polje
-			if (polje.grid[p.x][p.y] != igralec) {
-				if (polje.grid[p.x][p.y] == null) {
-					return false;
-				}
-				continue;
-			}
-
-			// pogledamo ce je to presecisce ze blo pregledano
-			if (obiskane.contains(p)) {
-				continue;
-			}
-
-			// dodamo k obiskanim
-			obiskane.add(p);
-
-			// dodamo sosednja presecisca v vrsto
-			if (p.x > 1)
-				vrsta.add(new Point(p.x - 1, p.y));
-			if (p.x < velikostPlosce)
-				vrsta.add(new Point(p.x + 1, p.y));
-			if (p.y > 1)
-				vrsta.add(new Point(p.x, p.y - 1));
-			if (p.y < velikostPlosce)
-				vrsta.add(new Point(p.x, p.y + 1));
-		}
-
-		// pogledamo ce so vse okoli nasprotnikovi zetoni
-		for (Point p : obiskane) {// System.out.print(p.x);
-			if ((p.x > 1 && polje.grid[p.x - 1][p.y] == null))
-				return false;
-			if (p.x < velikostPlosce && polje.grid[p.x + 1][p.y] == null)
-				return false;
-			if (p.y > 1 && polje.grid[p.x][p.y - 1] == null)
-				return false;
-			if (p.y < velikostPlosce && polje.grid[p.x][p.y + 1] == null)
-				return false;
-		}
-
-		// ce pridemo do konca je true
-		return true;
-	}
 
 	public Set<Point> identifyGroup(int x, int y, Polje polje) {
 	    Zeton player = polje.grid[x][y];
@@ -267,7 +201,6 @@ public class Igra {
 		Zeton zeton = zetonNaPotezi();
 		kopija.dodajZeton(x, y, zeton);
 	    Set<Point> group = identifyGroup(x, y, kopija);
-	    System.out.println(kopija);
 	    for (Point stone : group) {
 	        // Check if any neighboring intersection is empty (has null value)
 	        if (hasEmptyNeighbor(stone.x, stone.y)) {
@@ -295,10 +228,28 @@ public class Igra {
 	    return false; // No empty neighbors found
 	}
 
-
+	private boolean semiSuicide(int x, int y) {//ce bi igral zgleda kot suicide, vendar ujame nasprotnikovo grupo in ni suicide 
+		boolean captureFound = false;
+		Polje kopija = polje.kopija();
+		kopija.dodajZeton(x, y, zetonNaPotezi());
+	    if (kopija.isCaptured(x, y - 1)) {  // Check the stone above
+	        captureFound = true;
+	    }
+	    if (kopija.isCaptured(x, y + 1)) {  // Check the stone below
+	        captureFound = true;
+	    }
+	    if (kopija.isCaptured(x - 1, y)) {  // Check the stone to the left
+	        captureFound = true;
+	    }
+	    if (kopija.isCaptured(x + 1, y)) {  // Check the stone to the right
+	        captureFound = true;
+	    }
+	    return captureFound;
+	}
+	
 
 	public boolean isSuicideViolation(int x, int y) {
-		if (hasLiberty(x,y)) { 
+		if (hasLiberty(x,y) || semiSuicide(x,y)) { 
 			return false;
 		}
 		System.out.println("Suicide");
@@ -306,14 +257,15 @@ public class Igra {
 	}
 	
 	public boolean isKoRuleViolation(int x, int y) {
-		Zeton zeton;
+		boolean semi = false;
 		Polje trenutnoPolje = polje.kopija();
-		if (naPotezi == Igralec.ČRNI)
-			zeton = Zeton.CRNI;
-		else
-			zeton = Zeton.BELI;
-		trenutnoPolje.dodajZeton(x, y, zeton);
+		if(semiSuicide(x,y)) semi = true;
+		// Izvedemo potezo
+		trenutnoPolje.dodajZeton(x, y, zetonNaPotezi());
+		trenutnoPolje.odstraniUjeteZetone();
+		if(semi) trenutnoPolje.dodajZeton(x, y, zetonNaPotezi());
 		for (Polje prejsnjePolje: prejsnjaStanja) {
+			System.out.println(prejsnjePolje.grid);
 			if (prejsnjePolje.equals(trenutnoPolje)) {
 				System.out.println("ko");
 				return true;
@@ -343,7 +295,7 @@ public class Igra {
 		if (prostaPolja.isEmpty()) {
 			return false; // Ni moznih potez
 		}
-		if (x!= -1 && isCaptured(x, y)) {
+		if (x!= -1 && polje.isCaptured(x, y)) {
 			if (zeton == Zeton.CRNI) {
 				stanje = Stanje.ZMAGA_CRNI;
 			} else {

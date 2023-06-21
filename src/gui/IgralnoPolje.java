@@ -223,7 +223,7 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 					updated = new Poteza(x, y);
 				}
 			}
-			if(Vodja.igra.isKoRuleViolation(updated.x(), updated.y())) System.out.println("KO");
+			//if(Vodja.igra.isKoRuleViolation(updated.x(), updated.y())) System.out.println("KO");
 			Vodja.igrajClovekovoPotezo(updated);
 			napisNaVrsti(Vodja.igra.naPotezi);
 			repaint();
