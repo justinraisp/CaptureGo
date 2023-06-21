@@ -71,11 +71,19 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 	}
 
 	public static void napisNaVrsti(Igralec igralec) {
-		if (Vodja.igra.stanje == Stanje.ZMAGA_BELI) {
-			naVrsti.setText("Zmagal je beli!");
-		} else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI) {
-			naVrsti.setText("Zmagal je črni!");
-		} else {
+		if (Vodja.igra.stanje == Stanje.ZMAGA_BELI && Vodja.igra.tipZmage < 1) {
+			naVrsti.setText("Črni se je predal, zmagal je beli!");
+		}
+		else if (Vodja.igra.stanje == Stanje.ZMAGA_BELI && Vodja.igra.tipZmage == 1) {
+			naVrsti.setText(String.format("Konec igre, zmagal je beli %d proti %d", Vodja.igra.beliTocke, Vodja.igra.crniTocke));
+		}
+		else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI && Vodja.igra.tipZmage < 1) {
+			naVrsti.setText("Beli se je predal, zmagal je črni!");
+		} 
+		else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI && Vodja.igra.tipZmage == 1) {
+			naVrsti.setText(String.format("Konec igre, zmagal je črni %d proti %d", Vodja.igra.crniTocke, Vodja.igra.beliTocke));
+		}
+		else {
 			if (igralec == Igralec.ČRNI) {
 				naVrsti.setText("Na vrsti je črni");
 			} else

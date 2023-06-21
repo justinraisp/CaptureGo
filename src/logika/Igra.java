@@ -26,6 +26,13 @@ public class Igra {
 
 	public int crniTocke;
 	public int beliTocke;
+	
+	public int consecutivePassesBeli;
+	
+	public int consecutivePassesCrni;
+	
+	public int tipZmage = -1;
+	
 	// mozne poteze
 
 	// igralno polje
@@ -44,7 +51,9 @@ public class Igra {
 		polje = new Polje(N);
 		stanje = Stanje.V_TEKU;
 		crniTocke = 0;
-		beliTocke = 5; //kompenzacija, ker zacne kasneje
+		beliTocke = 2; //kompenzacija, ker zacne kasneje
+		consecutivePassesCrni = 0;
+		consecutivePassesBeli = 0;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				polje.grid[i][j] = null;
@@ -103,7 +112,14 @@ public class Igra {
 	}
 	
 	public void pass() {
+		System.out.println("Črni prej "+ consecutivePassesCrni);
+		if(naPotezi == Igralec.BELI) consecutivePassesBeli++;
+		else consecutivePassesCrni++;
 		naPotezi = naPotezi.nasprotnik();
+		System.out.println("Črni "+ consecutivePassesCrni);
+		System.out.println("Na potezi: " + naPotezi);
+		stanje = this.konecIgre();
+		System.out.println(stanje);
 	}
 	
 	public void concede() {
@@ -112,7 +128,6 @@ public class Igra {
 	    } else {
 	        stanje = Stanje.ZMAGA_CRNI;
 	    }
-	    System.out.println(calculateScore(polje));
 	}
 
 	public boolean odigraj(Poteza poteza) {
@@ -120,15 +135,12 @@ public class Igra {
 		int x = poteza.x();
 		int y = poteza.y();
 		boolean semi = false;
-		
-	    if (x == -1 && y == -1) {
-	        pass();
-	        return true;
-	    }
-		if (naPotezi == Igralec.ČRNI)
+		if (naPotezi == Igralec.ČRNI) {
 			zeton = Zeton.CRNI;
-		else
+		}
+		else {
 			zeton = Zeton.BELI;
+		}
 		// Preverimo, če je poteza veljavna
 		if (!jeVeljavnaPoteza(x, y)) {
 			return false;
@@ -139,6 +151,9 @@ public class Igra {
 		naPotezi = naPotezi.nasprotnik();
 		polje.odstraniUjeteZetone();
 		if(semi) polje.dodajZeton(x, y, zeton); //ce je semiSuicide je treba se enkrat dodat kamen, drugace ga tretira kot ujetega
+		
+		if(zeton == Zeton.CRNI) consecutivePassesCrni = 0;
+		if(zeton == Zeton.BELI) consecutivePassesBeli = 0;
 		// Preverimo, če je kateri od igralcev ujel nasprotnikov kamen, uporabljali za capturego
 		//if (polje.polje.isCaptured(x, y)) {
 		//	if (zeton == Zeton.CRNI) {
@@ -147,7 +162,10 @@ public class Igra {
 		//		stanje = Stanje.ZMAGA_BELI;
 		//	}
 		//}
+		
+		
 		prejsnjaStanja.add(polje.kopija());
+		konecIgre();
 		return true;
 	}
 	
@@ -155,7 +173,8 @@ public class Igra {
 
 	public boolean jeVeljavnaPoteza(int x, int y) {
 		// Pogledamo, če so koordinate veljavne in je prazno polje
-		Zeton igralec = polje.grid[x][y];
+		Zeton igralec;
+		if(x != -1) igralec = polje.grid[x][y];
 		if (x < 0 || x >= velikostPlosce + 1 || y < 0 || y >= velikostPlosce + 1 || polje.grid[x][y] != null) {
 			return false;
 		}
@@ -316,6 +335,8 @@ public class Igra {
 		kopija.naPotezi = this.naPotezi;
 		kopija.stanje = this.stanje;
 		kopija.polje = this.polje.kopija();
+		kopija.consecutivePassesBeli = this.consecutivePassesBeli;
+		kopija.consecutivePassesCrni = this.consecutivePassesCrni;
 		return kopija;
 	}
 
@@ -399,7 +420,6 @@ public class Igra {
 	public Map<Zeton, Integer> calculateScore(Polje polje) {
 	    Map<Zeton, Set<Set<Point>>> territoryOwners = getTerritoryOwners(polje);
 	    Map<Zeton, Integer> scores = new HashMap<>();
-	    System.out.println(territoryOwners);
 
 //	    for (Zeton player : Zeton.values()) {
 //	        scores.put(player, 0);
@@ -421,10 +441,37 @@ public class Igra {
 	    scores.put(Zeton.CRNI, crniTocke);
 	    scores.put(Zeton.BELI, beliTocke);
 
-
 	    return scores;
 	}
 
+	public Stanje konecIgre() {
+		int consecutivePasses = (consecutivePassesBeli + consecutivePassesCrni);
+		Stanje stanje = Stanje.V_TEKU;
+        if(consecutivePassesBeli == 2) {
+        	tipZmage = 0;
+        	stanje = Stanje.ZMAGA_CRNI;
+        }
+        else if(consecutivePassesCrni == 2 ) {
+        	tipZmage = 0;
+        	stanje = Stanje.ZMAGA_BELI;
+        }
+        else if(consecutivePasses == 2) {
+        	System.out.println(consecutivePasses);
+        	Map<Zeton, Integer> rezultat = calculateScore(polje);
+        	if(crniTocke > beliTocke) {
+	        	tipZmage = 1;
+	        	System.out.println(crniTocke);
+	        	System.out.println(beliTocke);
+	        	stanje = Stanje.ZMAGA_CRNI;
+        	}
+        	else if(crniTocke < beliTocke) {
+        		tipZmage = 1;
+        		stanje = Stanje.ZMAGA_BELI;
+        	}
+        }
+        return stanje;
+        
+	}
 	
 	
 }

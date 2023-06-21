@@ -191,33 +191,11 @@ public class Okno extends JFrame implements ActionListener{
 			IgralnoPolje.napisNaVrsti(Vodja.igra.naPotezi);
 		} 
 		 else if(objekt == concedeGumb) {
-			Vodja.igra.concede();
+			Vodja.concede();
 			IgralnoPolje.napisNaVrsti(Vodja.igra.naPotezi);
 		 }
 		repaint();
 	}
-	public void osveziGUI() {
-		if (Vodja.igra == null) {
-			naVrsti.setText("Igra ni v teku.");
-		}
-		else {
-			switch(Vodja.igra.dobiStanje()) {
-			case V_TEKU: 
-				naVrsti.setText("Na potezi je " + Vodja.igra.naPotezi() + 
-						" - " + Vodja.vrstaIgralca.get(Vodja.igra.naPotezi())); 
-				break;
-			case ZMAGA_BELI: 
-				naVrsti.setText("Zmagal je O - " + 
-						Vodja.vrstaIgralca.get(Igralec.BELI));
-				break;
-			case ZMAGA_CRNI: 
-				naVrsti.setText("Zmagal je X - " + 
-						Vodja.vrstaIgralca.get(Igralec.ČRNI));
-				break;
-			}
-		}
-		polje.repaint();
-	}	
 	
 	}
 	

@@ -23,10 +23,6 @@ public class Vodja {
 	public static Igra igra = null;
 
 	public static boolean clovekNaVrsti = false;
-	
-	private static int consecutivePassesBeli = 0;
-	
-	private static int consecutivePassesCrni = 0;
 
 	static Inteligenca inteligenca = new Inteligenca();
 
@@ -39,7 +35,9 @@ public class Vodja {
 
 	public static void igramo() {
 		IgralnoPolje.napisNaVrsti(igra.naPotezi());
-	    switch (igra.dobiStanje()) {
+		System.out.println("Črni v igramo: "+ igra.consecutivePassesCrni);
+
+	    switch (igra.stanje) {
 	        case ZMAGA_BELI:
 	            break;
 	        case ZMAGA_CRNI:
@@ -52,6 +50,7 @@ public class Vodja {
 	                    clovekNaVrsti = true;
 	                    break;
 	                case R:
+	                	System.out.println(igra.dobiStanje());
 	                    SwingUtilities.invokeLater(() -> {
 	                        Poteza poteza = inteligenca.izberiPotezo(igra);
 	                        igrajRacunalnikovoPotezo(poteza);
@@ -63,9 +62,10 @@ public class Vodja {
 	}
 
 
+
 	public static void igrajRacunalnikovoPotezo(Poteza poteza) {
 	    if (poteza != null && igra.odigraj(poteza)) {
-	        clovekNaVrsti = false;
+	        clovekNaVrsti = true;
 	        SwingUtilities.invokeLater(() -> {
 	            // Delay the board refresh to allow the UI to update
 	            try {
@@ -81,10 +81,6 @@ public class Vodja {
 
 	public static void igrajClovekovoPotezo(Poteza poteza) {
 	    if (poteza != null && igra.odigraj(poteza)) {
-	    	if(igra.naPotezi == Igralec.ČRNI) {
-	    		consecutivePassesBeli = 0;
-	    	}
-	    	else consecutivePassesCrni = 0;
 	        clovekNaVrsti = false;
 	        SwingUtilities.invokeLater(() -> {
 	            try {
@@ -97,22 +93,14 @@ public class Vodja {
 	    }
 	}
 	public static void pass() {
-	    	if(igra.naPotezi == Igralec.BELI) {
-	    		consecutivePassesBeli++;
-	    	}
-	    	else consecutivePassesCrni++;
-	        igra.pass();
-	        if(consecutivePassesBeli == 2) igra.stanje = Stanje.ZMAGA_CRNI;
-	        if(consecutivePassesCrni == 2) igra.stanje = Stanje.ZMAGA_BELI;
-	        SwingUtilities.invokeLater(() -> {
-	            try {
-	                TimeUnit.MILLISECONDS.sleep(500); // Adjust the delay as needed
-	            } catch (InterruptedException e) {
-	                e.printStackTrace();
-	            }
-	            System.out.println(consecutivePassesCrni);
-	            igramo();
-	        });
+        	igra.pass();
+        	igramo();
 	}
 	
+	public static void concede() {
+		igra.concede();
+		igramo();
+	}
+	
+
 }
