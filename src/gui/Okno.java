@@ -39,7 +39,7 @@ public class Okno extends JFrame implements ActionListener{
 	private JMenuItem menuVelikostPlosce;
 	private JMenuItem menuBarvaPrvega, menuBarvaDrugega, menuBarvaRoba;
 	private JButton passGumb;
-	private JButton concedeGumb;
+	private JButton resignGumb;
 	private JLabel naVrsti;
 	private int stevec = 0;
 	
@@ -79,14 +79,16 @@ public class Okno extends JFrame implements ActionListener{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
-    private void createPassAndConcedeButton() {
+    private void createPassAndResignButton() {
     	if(stevec == 0) {
         passGumb = new JButton("Pass");
         passGumb.addActionListener(this);
+        passGumb.setPreferredSize(new Dimension(75,20));
         polje.add(passGumb);
-        concedeGumb = new JButton("Concede");
-        concedeGumb.addActionListener(this);
-        polje.add(concedeGumb);
+        resignGumb = new JButton("Resign");
+        resignGumb.addActionListener(this);
+        resignGumb.setPreferredSize(new Dimension(75,20));
+        polje.add(resignGumb);
         stevec++;
     	}
     }
@@ -113,7 +115,6 @@ public class Okno extends JFrame implements ActionListener{
 			int izbira = dialog.showOpenDialog(this);
 			if (izbira == JFileChooser.APPROVE_OPTION) {
 				String ime = dialog.getSelectedFile().getPath();
-
 			}
 		}
 		else if (objekt == menuShrani) {
@@ -139,21 +140,19 @@ public class Okno extends JFrame implements ActionListener{
 			Color barva = JColorChooser.showDialog(this, "Izberi barvo drugega igralca", polje.barvaDrugega);
 			if (barva != null) {
 				polje.barvaDrugega = barva;
-				repaint();
 			}
 		}
 		else if (objekt == menuBarvaRoba) {
 			Color barva = JColorChooser.showDialog(this, "Izberi barvo roba", polje.barvaRoba);
 			if (barva != null) {
 				polje.barvaRoba = barva;
-				
 			}
 		}
 		else if (objekt == menuVelikostPlosce) {
 			String velikostPlosce = JOptionPane.showInputDialog(this, "Velikost plošče:");
 			if (velikostPlosce != null && velikostPlosce.matches("([2-9]|1[0-9])")) {
 				Igra.velikostPlosce =Integer.parseInt(velikostPlosce);
-				//Vodja.igramoNovoIgro();
+				Vodja.igramoNovoIgro();
 				
 			}
 		}
@@ -162,7 +161,7 @@ public class Okno extends JFrame implements ActionListener{
 			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C); 
 			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
 			Vodja.igramoNovoIgro();
-			createPassAndConcedeButton();
+			createPassAndResignButton();
 			
 		}
 		 else if (objekt == igraRacunalnikClovek) {
@@ -170,28 +169,28 @@ public class Okno extends JFrame implements ActionListener{
 			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R); 
 			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.C);
 			Vodja.igramoNovoIgro();
-			createPassAndConcedeButton();
+			createPassAndResignButton();
 		} 
 		 else if (objekt == igraClovekClovek) {
 			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
 			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C); 
 			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.C);
 			Vodja.igramoNovoIgro();
-			createPassAndConcedeButton();
+			createPassAndResignButton();
 		} 
 		 else if (objekt == igraRacunalnikRacunalnik) {
 			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
 			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R); 
 			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
 			Vodja.igramoNovoIgro();
-			createPassAndConcedeButton();
+			createPassAndResignButton();
 		} 
 		 else if(objekt == passGumb) {
 			Vodja.pass();
 			IgralnoPolje.napisNaVrsti(Vodja.igra.naPotezi);
 		} 
-		 else if(objekt == concedeGumb) {
-			Vodja.concede();
+		 else if(objekt == resignGumb) {
+			Vodja.resign();
 			IgralnoPolje.napisNaVrsti(Vodja.igra.naPotezi);
 		 }
 		repaint();

@@ -43,7 +43,6 @@ public class Inteligenca extends KdoIgra {
 			List<String> rezultati = odigrajVzporedneIgre(vozelZaRaziskat, igralec);
 			for (int l = 0; l < 10; l++) {
 				String rezultatIgre = rezultati.get(l);
-				System.out.println(rezultatIgre);
 				pogledNazaj(vozelZaRaziskat, rezultatIgre);
 			}
 		}
@@ -97,7 +96,6 @@ public class Inteligenca extends KdoIgra {
 		Vozel zacasenVozel = vozel.kopija();
 		Stanje boardStatus = zacasenVozel.getStanje();
 		String rezultat = null;
-
 		while (boardStatus == Stanje.V_TEKU) {
 			zacasenVozel.igra.odigrajNakljucnoPotezo();
 			boardStatus = zacasenVozel.igra.dobiStanje();

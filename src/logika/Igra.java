@@ -4,7 +4,6 @@ import logika.Zeton;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -122,7 +121,7 @@ public class Igra {
 		System.out.println(stanje);
 	}
 	
-	public void concede() {
+	public void resign() {
 	    if (naPotezi == Igralec.ČRNI) {
 	        stanje = Stanje.ZMAGA_BELI;
 	    } else {

@@ -1,9 +1,5 @@
 package gui;
 
-import logika.*;
-import splosno.Poteza;
-import vodja.Vodja;
-
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,15 +13,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
+import javax.swing.Timer;
 
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import logika.Igralec;
+import logika.Stanje;
+import logika.Zeton;
+import splosno.Poteza;
+import vodja.Vodja;
 
 @SuppressWarnings("serial")
 public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
@@ -38,11 +36,6 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 	protected Stroke debelinaRoba;
 	protected double polmer;
 	protected double premer;
-	// public int Vodja.igra.velikostPlosce = Igra.Vodja.igra.velikostPlosce;
-	// public Igralec naPotezi = Igra.naPotezi;
-	// public static Stanje stanje = Stanje.V_TEKU;
-	// private static int steviloPotez = Igra.steviloPotez;
-	// protected Polje polje = Igra.polje;
 	public static JLabel naVrsti = new JLabel("");
 	private JLabel koViolationLabel;
 
@@ -112,8 +105,8 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 			Graphics2D g2 = (Graphics2D) g;
 
 			g2.setColor(barvaBorda); // Set the color of the background
-			g2.fillRect(odmikSirina, odmikVisina, (Vodja.igra.velikostPlosce * w),
-					(int) (Vodja.igra.velikostPlosce * w));
+			g2.fillRect(odmikSirina, odmikVisina, Vodja.igra.velikostPlosce * w,
+					Vodja.igra.velikostPlosce * w);
 
 			g2.setColor(barvaRoba);
 			g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
@@ -134,23 +127,23 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 					int y = (int) ((int) ((j) * w) + odmikVisina);
 					if (Vodja.igra.polje.grid[i][j] == Zeton.CRNI) {
 						g2.setColor(Color.BLACK);
-						g2.drawOval(round(x - 3 * polmer), round(y - 3 * polmer), (int) premer, (int) premer);
+						//g2.drawOval(round(x - 4 * polmer), round(y - 4 * polmer), round(2*premer), round(2*premer));
 						//if (Vodja.igra.polje.isCaptured(i, j)) {		Uporabljali za capturego
 						//	g2.setColor(Color.RED);
 						//	Vodja.igra.stanje = Stanje.ZMAGA_BELI;
 						//	napisNaVrsti(Vodja.igra.naPotezi);
 						//}
-						g2.fillOval(round(x - 3 * polmer), round(y - 3 * polmer), (int) premer, (int) premer);
+						g2.fillOval(round(x - 4 * polmer), round(y - 4 * polmer), (int) (2*premer), (int) (2*premer));
 					} else if (Vodja.igra.polje.grid[i][j] == Zeton.BELI) {
-						g2.setColor(Color.BLACK);
-						g2.drawOval(round(x - 3 * polmer), round(y - 3 * polmer), (int) premer, (int) premer);
+						//g2.setColor(Color.BLACK);
+						//g2.drawOval(round(x - 4 * polmer), round(y - 4 * polmer), (int) (2*premer), (int) (2*premer));
 						g2.setColor(Color.WHITE);
 						//if (Vodja.igra.polje.isCaptured(i, j)) {		Uporabljali za capturego
 						//	g2.setColor(Color.RED);
 						//	Vodja.igra.stanje = Stanje.ZMAGA_CRNI;
 						//	napisNaVrsti(Vodja.igra.naPotezi);
 						//}
-						g2.fillOval(round(x - 3 * polmer), round(y - 3 * polmer), (int) premer, (int) premer);
+						g2.fillOval(round(x - 4 * polmer), round(y - 4 * polmer), (int) (2*premer), (int) (2*premer));
 					}
 				}
 			}
@@ -231,9 +224,30 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 					updated = new Poteza(x, y);
 				}
 			}
-			//if(Vodja.igra.isKoRuleViolation(updated.x(), updated.y())) System.out.println("KO");
 			Vodja.igrajClovekovoPotezo(updated);
 			napisNaVrsti(Vodja.igra.naPotezi);
+			if(updated != null && Vodja.igra.isKoRuleViolation(updated.x(), updated.y())) {
+				naVrsti.setText("KO kršitev, izberite drugo potezo!");
+			    int delay = 5000; //5 sekund kaze za napako
+
+			    Timer timer = new Timer(delay, event -> {
+			        napisNaVrsti(Vodja.igra.naPotezi);
+			        repaint();
+			    });
+			    timer.setRepeats(false);
+			    timer.start();
+			}
+			if(updated != null && Vodja.igra.isSuicideViolation(updated.x(), updated.y())) {
+				naVrsti.setText("Samomor kršitev, izberite drugo potezo!");
+			    int delay = 5000; //5 sekund kaze za napako
+
+			    Timer timer = new Timer(delay, event -> {
+			        napisNaVrsti(Vodja.igra.naPotezi);
+			        repaint();
+			    });
+			    timer.setRepeats(false);
+			    timer.start();
+			}
 			repaint();
 		}
 	}

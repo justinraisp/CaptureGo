@@ -34,9 +34,7 @@ public class Vodja {
 	}
 
 	public static void igramo() {
-		IgralnoPolje.napisNaVrsti(igra.naPotezi());
-		System.out.println("Črni v igramo: "+ igra.consecutivePassesCrni);
-
+		//IgralnoPolje.napisNaVrsti(igra.naPotezi());
 	    switch (igra.stanje) {
 	        case ZMAGA_BELI:
 	            break;
@@ -50,7 +48,6 @@ public class Vodja {
 	                    clovekNaVrsti = true;
 	                    break;
 	                case R:
-	                	System.out.println(igra.dobiStanje());
 	                    SwingUtilities.invokeLater(() -> {
 	                        Poteza poteza = inteligenca.izberiPotezo(igra);
 	                        igrajRacunalnikovoPotezo(poteza);
@@ -67,7 +64,6 @@ public class Vodja {
 	    if (poteza != null && igra.odigraj(poteza)) {
 	        clovekNaVrsti = true;
 	        SwingUtilities.invokeLater(() -> {
-	            // Delay the board refresh to allow the UI to update
 	            try {
 	                TimeUnit.MILLISECONDS.sleep(200); // Adjust the delay as needed
 	            } catch (InterruptedException e) {
@@ -97,8 +93,8 @@ public class Vodja {
         	igramo();
 	}
 	
-	public static void concede() {
-		igra.concede();
+	public static void resign() {
+		igra.resign();
 		igramo();
 	}
 	
