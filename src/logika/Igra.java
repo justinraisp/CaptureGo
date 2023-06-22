@@ -26,9 +26,9 @@ public class Igra {
 	public int crniTocke;
 	public int beliTocke;
 
-	public int consecutivePassesBeli;
+	public int zaporedniPassiBeli;
 
-	public int consecutivePassesCrni;
+	public int zaporedniPassiCrni;
 
 	public int tipZmage = -1;
 
@@ -49,8 +49,8 @@ public class Igra {
 		stanje = Stanje.V_TEKU;
 		crniTocke = 0;
 		beliTocke = velikostPlosce / 4; // kompenzacija, ker zacne kasneje
-		consecutivePassesCrni = 0;
-		consecutivePassesBeli = 0;
+		zaporedniPassiCrni = 0;
+		zaporedniPassiBeli = 0;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				polje.grid[i][j] = null;
@@ -112,9 +112,9 @@ public class Igra {
 
 	public void pass() {
 		if (naPotezi == Igralec.BELI)
-			consecutivePassesBeli++;
+			zaporedniPassiBeli++;
 		else
-			consecutivePassesCrni++;
+			zaporedniPassiCrni++;
 		naPotezi = naPotezi.nasprotnik();
 		stanje = this.konecIgre();
 	}
@@ -146,6 +146,8 @@ public class Igra {
 		// Izvedemo potezo
 		polje.dodajZeton(x, y, zeton);
 		naPotezi = naPotezi.nasprotnik();
+		Set<Point> obiskane = new HashSet<>();
+		Set<Point> grupa = najdiGrupo(x,y,zeton,obiskane,polje);
 		if (polje.odstraniUjeteZetone(captureGo)) {
 			tipZmage = 2;
 			if (zeton == zeton.BELI)
@@ -153,17 +155,15 @@ public class Igra {
 			else
 				stanje = stanje.ZMAGA_CRNI;
 		}
-		if (semi)
-			polje.dodajZeton(x, y, zeton); // ce je semiSuicide je treba se enkrat dodat kamen, drugace ga tretira kot
+		if (semi) {
+			for(Point point : grupa)
+			polje.dodajZeton(point.x, point.y, zeton); // ce je semiSuicide je treba se enkrat dodat kamne iz te grupe, drugace ga tretira kot
 											// ujetega
-
+		}
 		if (zeton == Zeton.CRNI)
-			consecutivePassesCrni = 0;
+			zaporedniPassiCrni = 0;
 		if (zeton == Zeton.BELI)
-			consecutivePassesBeli = 0;
-
-		// Preverimo, če je kateri od igralcev ujel nasprotnikov kamen, uporabljali za
-		// capturego
+			zaporedniPassiBeli = 0;
 
 		prejsnjaStanja.add(polje.kopija());
 		konecIgre();
@@ -187,91 +187,92 @@ public class Igra {
 		return true;
 	}
 
-	public Set<Point> identifyGroup(int x, int y, Zeton player, Set<Point> visited, Polje polje) {
-		Set<Point> group = new HashSet<>(); // Set to store the group of stones
+	public Set<Point> najdiGrupo(int x, int y, Zeton player, Set<Point> obiskane, Polje polje) {
+		Set<Point> grupa = new HashSet<>(); // Set to store the grupa of zetons
 
-		// Call the DFS method to identify the group
-		dfs(x, y, player, group, visited, polje);
+		// Poklicemo dfs da dobimo grupe
+		dfs(x, y, player, grupa, obiskane, polje);
 
-		return group;
+		return grupa;
 	}
 
-	private void dfs(int x, int y, Zeton player, Set<Point> group, Set<Point> visited, Polje polje) {
-		if (x < 1 || x > velikostPlosce || y < 1 || y > velikostPlosce || visited.contains(new Point(x, y))) {
+	private void dfs(int x, int y, Zeton player, Set<Point> grupa, Set<Point> obiskane, Polje polje) {
+		if (x < 1 || x > velikostPlosce || y < 1 || y > velikostPlosce || obiskane.contains(new Point(x, y))) {
 			return;
 		}
 
 		Point current = new Point(x, y);
 
 		if (polje.grid[x][y] != player) {
-			visited.add(current);
+			obiskane.add(current);
 			return;
 		}
 
-		visited.add(current);
-		group.add(current);
+		obiskane.add(current);
+		grupa.add(current);
 
-		dfs(x - 1, y, player, group, visited, polje);
-		dfs(x + 1, y, player, group, visited, polje);
-		dfs(x, y - 1, player, group, visited, polje);
-		dfs(x, y + 1, player, group, visited, polje);
+		dfs(x - 1, y, player, grupa, obiskane, polje);
+		dfs(x + 1, y, player, grupa, obiskane, polje);
+		dfs(x, y - 1, player, grupa, obiskane, polje);
+		dfs(x, y + 1, player, grupa, obiskane, polje);
 	}
 
-	public boolean hasLiberty(int x, int y) {
+	public boolean imaLiberty(int x, int y) {
 		Polje kopija = polje.kopija();
 		Zeton zeton = zetonNaPotezi();
 		kopija.dodajZeton(x, y, zeton);
-		Set<Point> visited = new HashSet<>();
-		Set<Point> group = identifyGroup(x, y, zeton, visited, kopija);
-		for (Point stone : group) {
-			// Check if any neighboring intersection is empty (has null value)
-			if (hasEmptyNeighbor(stone.x, stone.y)) {
-				return true; // The group has at least one liberty
+		Set<Point> obiskane = new HashSet<>();
+		Set<Point> grupa = najdiGrupo(x, y, zeton, obiskane, kopija);
+		for (Point tocka : grupa) {
+			if (imaPraznegaSoseda(tocka.x, tocka.y)) {
+				return true;
 			}
 		}
-		return false; // No liberties found in the group
+		return false;
 	}
 
-	private boolean hasEmptyNeighbor(int x, int y) {
-		// Check if any neighboring intersection is empty (has null value)
+	private boolean imaPraznegaSoseda(int x, int y) {
 		if (x > 1 && polje.grid[x - 1][y] == null) {
-			return true; // Left neighbor is empty
+			return true; 
 		}
 		if (x < velikostPlosce && polje.grid[x + 1][y] == null) {
-			return true; // Right neighbor is empty
+			return true; 
 		}
 		if (y > 1 && polje.grid[x][y - 1] == null) {
-			return true; // Upper neighbor is empty
+			return true;
 		}
 		if (y < velikostPlosce && polje.grid[x][y + 1] == null) {
-			return true; // Lower neighbor is empty
+			return true;
 		}
 
-		return false; // No empty neighbors found
+		return false;
 	}
 
 	private boolean semiSuicide(int x, int y) {// ce bi igral zgleda kot suicide, vendar ujame nasprotnikovo grupo in ni
 												// suicide
-		boolean captureFound = false;
+		boolean captureNajdeno = false;
 		Polje kopija = polje.kopija();
 		kopija.dodajZeton(x, y, zetonNaPotezi());
-		if (y > 1 && kopija.isCaptured(x, y - 1)) { // Check the stone above
-			captureFound = true;
+		if (y > 1 && kopija.isCaptured(x, y - 1)) { 
+			captureNajdeno = true;
 		}
-		if (y < velikostPlosce && kopija.isCaptured(x, y + 1)) { // Check the stone below
-			captureFound = true;
+		if (y < velikostPlosce && kopija.isCaptured(x, y + 1)) { 
+			captureNajdeno = true;
 		}
-		if (x > 1 && kopija.isCaptured(x - 1, y)) { // Check the stone to the left
-			captureFound = true;
+		if (x > 1 && kopija.isCaptured(x - 1, y)) { 
+			captureNajdeno = true;
 		}
-		if (x < velikostPlosce && kopija.isCaptured(x + 1, y)) { // Check the stone to the right
-			captureFound = true;
+		if (x < velikostPlosce && kopija.isCaptured(x + 1, y)) { 
+			captureNajdeno = true;
 		}
-		return captureFound;
+		return captureNajdeno;
 	}
 
 	public boolean isSuicideViolation(int x, int y) {
-		if (hasLiberty(x, y) || semiSuicide(x, y)) {
+		Set<Point> obiskane = new HashSet<>();
+		for(Point point : najdiGrupo(x,y,zetonNaPotezi(),obiskane, polje))
+			if(imaLiberty(point.x,point.y) || semiSuicide(point.x, point.y)) return false;
+		if (imaLiberty(x, y) || semiSuicide(x, y)) {
 			return false;
 		}
 		return true;
@@ -335,8 +336,8 @@ public class Igra {
 		kopija.naPotezi = this.naPotezi;
 		kopija.stanje = this.stanje;
 		kopija.polje = this.polje.kopija();
-		kopija.consecutivePassesBeli = this.consecutivePassesBeli;
-		kopija.consecutivePassesCrni = this.consecutivePassesCrni;
+		kopija.zaporedniPassiBeli = this.zaporedniPassiBeli;
+		kopija.zaporedniPassiCrni = this.zaporedniPassiCrni;
 		return kopija;
 	}
 
@@ -344,46 +345,46 @@ public class Igra {
 		return polje;
 	}
 
-	public Set<Set<Point>> identifyTerritory(Polje polje) {
-		Set<Set<Point>> territories = new HashSet<>();
-		Set<Point> visited = new HashSet<>();
+	public Set<Set<Point>> najdiTeritorij(Polje polje) {
+		Set<Set<Point>> teritoriji = new HashSet<>();
+		Set<Point> obiskane = new HashSet<>();
 
 		for (int x = 1; x <= velikostPlosce; x++) {
 			for (int y = 1; y <= velikostPlosce; y++) {
-				Point position = new Point(x, y);
-				if (!visited.contains(position) && polje.grid[x][y] == null) {
-					Set<Point> territory = identifyGroup(x, y, null, visited, polje);
-					territories.add(territory);
+				Point pozicija = new Point(x, y);
+				if (!obiskane.contains(pozicija) && polje.grid[x][y] == null) {
+					Set<Point> teritorij = najdiGrupo(x, y, null, obiskane, polje);
+					teritoriji.add(teritorij);
 				}
 			}
 		}
-		return territories;
+		return teritoriji;
 	}
 
-	public Map<Zeton, Set<Set<Point>>> getTerritoryOwners(Polje polje) {
-		Map<Zeton, Set<Set<Point>>> territoryOwners = new HashMap<>();
-		Set<Set<Point>> territories = identifyTerritory(polje);
+	public Map<Zeton, Set<Set<Point>>> dobiLastnikaTeritorija(Polje polje) {
+		Map<Zeton, Set<Set<Point>>> lastnikiTeritorijev = new HashMap<>();
+		Set<Set<Point>> teritoriji = najdiTeritorij(polje);
 
-		for (Set<Point> territory : territories) {
-			Zeton owner = determineTerritoryOwner(territory, polje);
+		for (Set<Point> teritorij : teritoriji) {
+			Zeton owner = determineTerritoryOwner(teritorij, polje);
 
-			if (!territoryOwners.containsKey(owner)) {
-				territoryOwners.put(owner, new HashSet<>());
+			if (!lastnikiTeritorijev.containsKey(owner)) {
+				lastnikiTeritorijev.put(owner, new HashSet<>());
 			}
-			territoryOwners.get(owner).add(territory);
+			lastnikiTeritorijev.get(owner).add(teritorij);
 		}
 
-		return territoryOwners;
+		return lastnikiTeritorijev;
 	}
 
-	private Zeton determineTerritoryOwner(Set<Point> territory, Polje polje) {
+	private Zeton determineTerritoryOwner(Set<Point> teritorij, Polje polje) {
 		Zeton owner = null;
 
-		for (Point position : territory) {
-			Set<Zeton> adjacentStones = getAdjacentStones(position, polje);
+		for (Point position : teritorij) {
+			Set<Zeton> sosednjiZetoni = getAdjacentStones(position, polje);
 
-			if (adjacentStones.size() == 1) {
-				owner = adjacentStones.iterator().next();
+			if (sosednjiZetoni.size() == 1) {
+				owner = sosednjiZetoni.iterator().next();
 			} else {
 				owner = null; // Obmocje ima kamne obeh igralcev
 				break;
@@ -398,40 +399,40 @@ public class Igra {
 		int y = position.y;
 		int size = velikostPlosce;
 
-		Set<Zeton> adjacentStones = new HashSet<>();
+		Set<Zeton> sosednjiZetoni = new HashSet<>();
 
 		if (x > 1)
-			addStone(adjacentStones, polje.grid[x - 1][y]);
+			dodajZeton(sosednjiZetoni, polje.grid[x - 1][y]);
 		if (x < size)
-			addStone(adjacentStones, polje.grid[x + 1][y]);
+			dodajZeton(sosednjiZetoni, polje.grid[x + 1][y]);
 		if (y > 1)
-			addStone(adjacentStones, polje.grid[x][y - 1]);
+			dodajZeton(sosednjiZetoni, polje.grid[x][y - 1]);
 		if (y < size)
-			addStone(adjacentStones, polje.grid[x][y + 1]);
+			dodajZeton(sosednjiZetoni, polje.grid[x][y + 1]);
 
-		return adjacentStones;
+		return sosednjiZetoni;
 	}
 
-	private void addStone(Set<Zeton> stones, Zeton stone) {
-		if (stone != null) {
-			stones.add(stone);
+	private void dodajZeton(Set<Zeton> zetons, Zeton zeton) {
+		if (zeton != null) {
+			zetons.add(zeton);
 		}
 	}
 
-	public Map<Zeton, Integer> calculateScore(Polje polje) {
-		Map<Zeton, Set<Set<Point>>> territoryOwners = getTerritoryOwners(polje);
-		Map<Zeton, Integer> scores = new HashMap<>();
+	public Map<Zeton, Integer> izracunajRezultat(Polje polje) {
+		Map<Zeton, Set<Set<Point>>> lastnikiTeritorijev = dobiLastnikaTeritorija(polje);
+		Map<Zeton, Integer> rezultati = new HashMap<>();
 
-		for (Entry<Zeton, Set<Set<Point>>> entry : territoryOwners.entrySet()) {
+		for (Entry<Zeton, Set<Set<Point>>> entry : lastnikiTeritorijev.entrySet()) {
 			Zeton owner = entry.getKey();
-			for (Set<Point> territory : entry.getValue()) {
+			for (Set<Point> teritorij : entry.getValue()) {
 				if (owner == Zeton.BELI) {
-					int territoryScore = territory.size();
-					beliTocke += territoryScore;
+					int teritorijRezultat = teritorij.size();
+					beliTocke += teritorijRezultat;
 				}
 				if (owner == Zeton.CRNI) {
-					int territoryScore = territory.size();
-					crniTocke += territoryScore;
+					int teritorijRezultat = teritorij.size();
+					crniTocke += teritorijRezultat;
 				}
 			}
 		}
@@ -443,27 +444,27 @@ public class Igra {
 					crniTocke++;
 			}
 		}
-		scores.put(Zeton.CRNI, crniTocke);
-		scores.put(Zeton.BELI, beliTocke);
+		rezultati.put(Zeton.CRNI, crniTocke);
+		rezultati.put(Zeton.BELI, beliTocke);
 
-		return scores;
+		return rezultati;
 	}
 
 	public Stanje konecIgre() {
-		int consecutivePasses = (consecutivePassesBeli + consecutivePassesCrni);
+		int zaporedniPassi = (zaporedniPassiBeli + zaporedniPassiCrni);
 		Stanje stanje = Stanje.V_TEKU;
-		if (consecutivePassesBeli == 2) {
+		if (zaporedniPassiBeli == 2) {
 			tipZmage = 0;
 			stanje = Stanje.ZMAGA_CRNI;
-		} else if (consecutivePassesCrni == 2) {
+		} else if (zaporedniPassiCrni == 2) {
 			tipZmage = 0;
 			stanje = Stanje.ZMAGA_BELI;
-		} else if (consecutivePasses == 2) {
-			Map<Zeton, Integer> rezultat = calculateScore(polje);
+		} else if (zaporedniPassi == 2) {
+			Map<Zeton, Integer> rezultat = izracunajRezultat(polje);
 			if (crniTocke > beliTocke) {
 				tipZmage = 1;
 				stanje = Stanje.ZMAGA_CRNI;
-			} else if (crniTocke < beliTocke) {
+			} else if (crniTocke <= beliTocke) {
 				tipZmage = 1;
 				stanje = Stanje.ZMAGA_BELI;
 			}

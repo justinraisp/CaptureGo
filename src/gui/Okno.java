@@ -58,7 +58,6 @@ public class Okno extends JFrame implements ActionListener {
 		menuBarvaPrvega = dodajMenuItem(menuNastavitve, "Barva prvega igralca ...");
 		menuBarvaDrugega = dodajMenuItem(menuNastavitve, "Barva drugega igralca ...");
 		naVrsti = new JLabel();
-
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
@@ -113,11 +112,11 @@ public class Okno extends JFrame implements ActionListener {
 		} else if (objekt == menuNovaIgra) {
 			novaIgra();
 		} else if (objekt == menuPravilaCaptureGo) {
-		    String pravila = "Kamne se postavlja na enak način kot pri go, le da je zmagovalec igralec, ki prvi ujame kak nasprotnikov kamen"; 
-		    JOptionPane.showMessageDialog(this, pravila, "Pravila CaptureGo", JOptionPane.INFORMATION_MESSAGE);
+			String pravila = "<html>Kamne se postavlja na enak način kot pri go, razlike pa so sledeče: <ul><li> Ni preskakovanja potez, </li><li> Ni predaje, </li><li> Zmagovalec je igralec, ki prvi ujame kak nasprotnikov kamen.</li></ul></html>";
+			JOptionPane.showMessageDialog(this, pravila, "Pravila CaptureGo", JOptionPane.INFORMATION_MESSAGE);
 		} else if (objekt == menuPravilaGo) {
-		    String pravila = "Veljajo standardna pravila za go, točkuje se pa zasedeno območje ter število kamnov posameznega igralca. \nBeli ima kompenzacijo glede na velikost plošče";
-		    JOptionPane.showMessageDialog(this, pravila, "Pravila Go", JOptionPane.INFORMATION_MESSAGE);
+			String pravila = "<html>Veljajo standardna pravila za go. Točkovanje pa je sledeče: <ul><li> Štejeta število zasedenih polj in število kamnov posameznega igralca. </li><li>Beli ima kompenzacijo glede na velikost plošče in zmaga v primeru izenačenega rezultata.</li></ul></html>";
+			JOptionPane.showMessageDialog(this, pravila, "Pravila Go", JOptionPane.INFORMATION_MESSAGE);
 		} else if (objekt == passGumb) {
 			Vodja.pass();
 			IgralnoPolje.napisNaVrsti(Vodja.igra.naPotezi);
@@ -130,33 +129,32 @@ public class Okno extends JFrame implements ActionListener {
 
 	private void novaIgra() {
 		Object[] options = { "Go", "CaptureGo" };
-		int gameType = JOptionPane.showOptionDialog(this, "Izberi vrsto igre:", "Nova igra", JOptionPane.DEFAULT_OPTION,
+		int tipIgre = JOptionPane.showOptionDialog(this, "Izberi vrsto igre:", "Nova igra", JOptionPane.DEFAULT_OPTION,
 				JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 
-		if (gameType == 0) {
+		if (tipIgre == 0) {
 			Object[] playerOptions = { "Igralec vs Igralec", "Igralec vs Računalnik", "Računalnik vs Igralec",
 					"Računalnik vs Računalnik" };
-			int playerType = JOptionPane.showOptionDialog(this, "Izberi vrsto igralcev:", "Nova igra - Go",
+			int tipIgralca = JOptionPane.showOptionDialog(this, "Izberi vrsto igralcev:", "Nova igra - Go",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, playerOptions, playerOptions[0]);
 
-			if (playerType == 0) {
+			if (tipIgralca == 0) {
 				// Igralec vs Igralec
-	            String boardSize = null;
-	            int size = 0;
-	            while (true) {
-	                boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
-	                if (boardSize == null) {
-	                    // User clicked Cancel or closed the dialog
-	                    break;
-	                }
-	                if (boardSize.matches("([2-9]|1[0-9])")) {
-	                    size = Integer.parseInt(boardSize);
-	                    break;
-	                } else {
-	                    JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
-	                            "Napaka", JOptionPane.ERROR_MESSAGE);
-	                }
-	            }
+				String boardSize = null;
+				int size = 0;
+				while (true) {
+					boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+					if (boardSize == null) {
+						break;
+					}
+					if (boardSize.matches("([2-9]|1[0-9])")) {
+						size = Integer.parseInt(boardSize);
+						break;
+					} else {
+						JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
+								"Napaka", JOptionPane.ERROR_MESSAGE);
+					}
+				}
 				if (boardSize != null) {
 					Vodja.vrstaIgralca = new EnumMap<Igralec, VrstaIgralca>(Igralec.class);
 					Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C);
@@ -165,24 +163,23 @@ public class Okno extends JFrame implements ActionListener {
 					Vodja.igramoNovoIgro(false);
 					createPassAndResignButton();
 				}
-			} else if (playerType == 1) {
+			} else if (tipIgralca == 1) {
 				// Igralec vs Računalnik
 				String boardSize = null;
-	            int size = 0;
-	            while (true) {
-	                boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
-	                if (boardSize == null) {
-	                    // User clicked Cancel or closed the dialog
-	                    break;
-	                }
-	                if (boardSize.matches("([2-9]|1[0-9])")) {
-	                    size = Integer.parseInt(boardSize);
-	                    break;
-	                } else {
-	                    JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
-	                            "Napaka", JOptionPane.ERROR_MESSAGE);
-	                }
-	            }
+				int size = 0;
+				while (true) {
+					boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+					if (boardSize == null) {
+						break;
+					}
+					if (boardSize.matches("([2-9]|1[0-9])")) {
+						size = Integer.parseInt(boardSize);
+						break;
+					} else {
+						JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
+								"Napaka", JOptionPane.ERROR_MESSAGE);
+					}
+				}
 				if (boardSize != null) {
 					Vodja.vrstaIgralca = new EnumMap<Igralec, VrstaIgralca>(Igralec.class);
 					Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C);
@@ -191,24 +188,23 @@ public class Okno extends JFrame implements ActionListener {
 					Vodja.igramoNovoIgro(false);
 					createPassAndResignButton();
 				}
-			} else if (playerType == 2) {
+			} else if (tipIgralca == 2) {
 				// Računalnik vs Igralec
 				String boardSize = null;
-	            int size = 0;
-	            while (true) {
-	                boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
-	                if (boardSize == null) {
-	                    // User clicked Cancel or closed the dialog
-	                    break;
-	                }
-	                if (boardSize.matches("([2-9]|1[0-9])")) {
-	                    size = Integer.parseInt(boardSize);
-	                    break;
-	                } else {
-	                    JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
-	                            "Napaka", JOptionPane.ERROR_MESSAGE);
-	                }
-	            }
+				int size = 0;
+				while (true) {
+					boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+					if (boardSize == null) {
+						break;
+					}
+					if (boardSize.matches("([2-9]|1[0-9])")) {
+						size = Integer.parseInt(boardSize);
+						break;
+					} else {
+						JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
+								"Napaka", JOptionPane.ERROR_MESSAGE);
+					}
+				}
 				if (boardSize != null) {
 					Vodja.vrstaIgralca = new EnumMap<Igralec, VrstaIgralca>(Igralec.class);
 					Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R);
@@ -217,57 +213,54 @@ public class Okno extends JFrame implements ActionListener {
 					Vodja.igramoNovoIgro(false);
 					createPassAndResignButton();
 				}
-			} else if (playerType == 3) {
+			} else if (tipIgralca == 3) {
 				// Računalnik vs Računalnik
 				String boardSize = null;
-	            int size = 0;
-	            while (true) {
-	                boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
-	                if (boardSize == null) {
-	                    // User clicked Cancel or closed the dialog
-	                    break;
-	                }
-	                if (boardSize.matches("([2-9]|1[0-9])")) {
-	                    size = Integer.parseInt(boardSize);
-	                    break;
-	                } else {
-	                    JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
-	                            "Napaka", JOptionPane.ERROR_MESSAGE);
-	                }
-	            }
+				int size = 0;
+				while (true) {
+					boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+					if (boardSize == null) {
+						break;
+					}
+					if (boardSize.matches("([2-9]|1[0-9])")) {
+						size = Integer.parseInt(boardSize);
+						break;
+					} else {
+						JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
+								"Napaka", JOptionPane.ERROR_MESSAGE);
+					}
+				}
 				if (boardSize != null) {
 					Vodja.vrstaIgralca = new EnumMap<Igralec, VrstaIgralca>(Igralec.class);
 					Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R);
 					Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
 					Igra.velikostPlosce = size;
 					Vodja.igramoNovoIgro(false);
-					createPassAndResignButton();
 				}
 			}
-		} else if (gameType == 1) {
+		} else if (tipIgre == 1) {
 			Object[] playerOptions = { "Igralec vs Igralec", "Igralec vs Računalnik", "Računalnik vs Igralec",
 					"Računalnik vs Računalnik" };
-			int playerType = JOptionPane.showOptionDialog(this, "Izberi vrsto igralcev:", "Nova igra - CaptureGo",
+			int tipIgralca = JOptionPane.showOptionDialog(this, "Izberi vrsto igralcev:", "Nova igra - CaptureGo",
 					JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, playerOptions, playerOptions[0]);
 
-			if (playerType == 0) {
+			if (tipIgralca == 0) {
 				// Igralec vs Igralec
-	            String boardSize = null;
-	            int size = 0;
-	            while (true) {
-	                boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
-	                if (boardSize == null) {
-	                    // User clicked Cancel or closed the dialog
-	                    break;
-	                }
-	                if (boardSize.matches("([2-9]|1[0-9])")) {
-	                    size = Integer.parseInt(boardSize);
-	                    break;
-	                } else {
-	                    JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
-	                            "Napaka", JOptionPane.ERROR_MESSAGE);
-	                }
-	            }
+				String boardSize = null;
+				int size = 0;
+				while (true) {
+					boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+					if (boardSize == null) {
+						break;
+					}
+					if (boardSize.matches("([2-9]|1[0-9])")) {
+						size = Integer.parseInt(boardSize);
+						break;
+					} else {
+						JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
+								"Napaka", JOptionPane.ERROR_MESSAGE);
+					}
+				}
 				if (boardSize != null) {
 					Vodja.vrstaIgralca = new EnumMap<Igralec, VrstaIgralca>(Igralec.class);
 					Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C);
@@ -275,24 +268,23 @@ public class Okno extends JFrame implements ActionListener {
 					Igra.velikostPlosce = size;
 					Vodja.igramoNovoIgro(true);
 				}
-			} else if (playerType == 1) {
+			} else if (tipIgralca == 1) {
 				// Igralec vs Računalnik
 				String boardSize = null;
-	            int size = 0;
-	            while (true) {
-	                boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
-	                if (boardSize == null) {
-	                    // User clicked Cancel or closed the dialog
-	                    break;
-	                }
-	                if (boardSize.matches("([2-9]|1[0-9])")) {
-	                    size = Integer.parseInt(boardSize);
-	                    break;
-	                } else {
-	                    JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
-	                            "Napaka", JOptionPane.ERROR_MESSAGE);
-	                }
-	            }
+				int size = 0;
+				while (true) {
+					boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+					if (boardSize == null) {
+						break;
+					}
+					if (boardSize.matches("([2-9]|1[0-9])")) {
+						size = Integer.parseInt(boardSize);
+						break;
+					} else {
+						JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
+								"Napaka", JOptionPane.ERROR_MESSAGE);
+					}
+				}
 				if (boardSize != null) {
 					Vodja.vrstaIgralca = new EnumMap<Igralec, VrstaIgralca>(Igralec.class);
 					Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C);
@@ -300,24 +292,23 @@ public class Okno extends JFrame implements ActionListener {
 					Igra.velikostPlosce = size;
 					Vodja.igramoNovoIgro(true);
 				}
-			} else if (playerType == 2) {
+			} else if (tipIgralca == 2) {
 				// Računalnik vs Igralec
 				String boardSize = null;
-	            int size = 0;
-	            while (true) {
-	                boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
-	                if (boardSize == null) {
-	                    // User clicked Cancel or closed the dialog
-	                    break;
-	                }
-	                if (boardSize.matches("([2-9]|1[0-9])")) {
-	                    size = Integer.parseInt(boardSize);
-	                    break;
-	                } else {
-	                    JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
-	                            "Napaka", JOptionPane.ERROR_MESSAGE);
-	                }
-	            }
+				int size = 0;
+				while (true) {
+					boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+					if (boardSize == null) {
+						break;
+					}
+					if (boardSize.matches("([2-9]|1[0-9])")) {
+						size = Integer.parseInt(boardSize);
+						break;
+					} else {
+						JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
+								"Napaka", JOptionPane.ERROR_MESSAGE);
+					}
+				}
 				if (boardSize != null) {
 					Vodja.vrstaIgralca = new EnumMap<Igralec, VrstaIgralca>(Igralec.class);
 					Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R);
@@ -325,24 +316,23 @@ public class Okno extends JFrame implements ActionListener {
 					Igra.velikostPlosce = size;
 					Vodja.igramoNovoIgro(true);
 				}
-			} else if (playerType == 3) {
+			} else if (tipIgralca == 3) {
 				// Računalnik vs Računalnik
 				String boardSize = null;
-	            int size = 0;
-	            while (true) {
-	                boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
-	                if (boardSize == null) {
-	                    // User clicked Cancel or closed the dialog
-	                    break;
-	                }
-	                if (boardSize.matches("([2-9]|1[0-9])")) {
-	                    size = Integer.parseInt(boardSize);
-	                    break;
-	                } else {
-	                    JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
-	                            "Napaka", JOptionPane.ERROR_MESSAGE);
-	                }
-	            }
+				int size = 0;
+				while (true) {
+					boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+					if (boardSize == null) {
+						break;
+					}
+					if (boardSize.matches("([2-9]|1[0-9])")) {
+						size = Integer.parseInt(boardSize);
+						break;
+					} else {
+						JOptionPane.showMessageDialog(this, "Neveljavna velikost plošče! Vnesite veljavno število.",
+								"Napaka", JOptionPane.ERROR_MESSAGE);
+					}
+				}
 				if (boardSize != null) {
 					Vodja.vrstaIgralca = new EnumMap<Igralec, VrstaIgralca>(Igralec.class);
 					Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R);

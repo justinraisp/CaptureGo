@@ -24,6 +24,7 @@ import logika.Stanje;
 import logika.Zeton;
 import splosno.Poteza;
 import vodja.Vodja;
+import vodja.VrstaIgralca;
 
 @SuppressWarnings("serial")
 public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionListener, KeyListener {
@@ -59,30 +60,25 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		setFocusable(true);
-		
 
 	}
 
 	public static void napisNaVrsti(Igralec igralec) {
 		if (Vodja.igra.stanje == Stanje.ZMAGA_BELI && Vodja.igra.tipZmage < 1) {
 			naVrsti.setText("Črni se je predal, zmagal je beli!");
-		}
-		else if (Vodja.igra.stanje == Stanje.ZMAGA_BELI && Vodja.igra.tipZmage == 1) {
-			naVrsti.setText(String.format("Konec igre, zmagal je beli %d proti %d", Vodja.igra.beliTocke, Vodja.igra.crniTocke));
-		}
-		else if (Vodja.igra.stanje == Stanje.ZMAGA_BELI && Vodja.igra.tipZmage == 2) {
+		} else if (Vodja.igra.stanje == Stanje.ZMAGA_BELI && Vodja.igra.tipZmage == 1) {
+			naVrsti.setText(String.format("Konec igre, zmagal je beli %d proti %d", Vodja.igra.beliTocke,
+					Vodja.igra.crniTocke));
+		} else if (Vodja.igra.stanje == Stanje.ZMAGA_BELI && Vodja.igra.tipZmage == 2) {
 			naVrsti.setText(String.format("Konec igre, zmagal je beli!", Vodja.igra.beliTocke, Vodja.igra.crniTocke));
-		}
-		else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI && Vodja.igra.tipZmage < 1) {
+		} else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI && Vodja.igra.tipZmage < 1) {
 			naVrsti.setText("Beli se je predal, zmagal je črni!");
-		} 
-		else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI && Vodja.igra.tipZmage == 1) {
-			naVrsti.setText(String.format("Konec igre, zmagal je črni %d proti %d", Vodja.igra.crniTocke, Vodja.igra.beliTocke));
-		}
-		else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI && Vodja.igra.tipZmage == 2) {
+		} else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI && Vodja.igra.tipZmage == 1) {
+			naVrsti.setText(String.format("Konec igre, zmagal je črni %d proti %d", Vodja.igra.crniTocke,
+					Vodja.igra.beliTocke));
+		} else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI && Vodja.igra.tipZmage == 2) {
 			naVrsti.setText(String.format("Konec igre, zmagal je črni!", Vodja.igra.crniTocke, Vodja.igra.beliTocke));
-		}
-		else {
+		} else {
 			if (igralec == Igralec.ČRNI) {
 				naVrsti.setText("Na vrsti je črni");
 			} else
@@ -111,8 +107,7 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 			Graphics2D g2 = (Graphics2D) g;
 
 			g2.setColor(barvaBorda); // Set the color of the background
-			g2.fillRect(odmikSirina, odmikVisina, Vodja.igra.velikostPlosce * w,
-					Vodja.igra.velikostPlosce * w);
+			g2.fillRect(odmikSirina, odmikVisina, Vodja.igra.velikostPlosce * w, Vodja.igra.velikostPlosce * w);
 
 			g2.setColor(barvaRoba);
 			g2.setStroke(new BasicStroke((float) (w * SIRINA_CRTE)));
@@ -133,30 +128,31 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 					int y = (int) ((int) ((j) * w) + odmikVisina);
 					if (Vodja.igra.polje.grid[i][j] == Zeton.CRNI) {
 						g2.setColor(barvaPrvega);
-						if(Vodja.igra.captureGo) {
-						if (Vodja.igra.polje.isCaptured(i, j)) {		//Uporabljali za capturego
-							g2.setColor(Color.RED);
-							Vodja.igra.stanje = Stanje.ZMAGA_BELI;
-							napisNaVrsti(Vodja.igra.naPotezi);
+						if (Vodja.igra.captureGo) {
+							if (Vodja.igra.polje.isCaptured(i, j)) { // Uporabljali za capturego
+								g2.setColor(Color.RED);
+								Vodja.igra.stanje = Stanje.ZMAGA_BELI;
+								napisNaVrsti(Vodja.igra.naPotezi);
+							}
 						}
-						}
-						g2.fillOval(round(x - 4 * polmer), round(y - 4 * polmer), (int) (2*premer), (int) (2*premer));
+						g2.fillOval(round(x - 4 * polmer), round(y - 4 * polmer), (int) (2 * premer),
+								(int) (2 * premer));
 					} else if (Vodja.igra.polje.grid[i][j] == Zeton.BELI) {
-						//g2.setColor(Color.BLACK);
+						// g2.setColor(Color.BLACK);
 						g2.setColor(barvaDrugega);
-						if(Vodja.igra.captureGo) {
-						if (Vodja.igra.polje.isCaptured(i, j)) {		//Uporabljali za capturego
-							g2.setColor(Color.RED);
-							Vodja.igra.stanje = Stanje.ZMAGA_CRNI;
-							napisNaVrsti(Vodja.igra.naPotezi);
+						if (Vodja.igra.captureGo) {
+							if (Vodja.igra.polje.isCaptured(i, j)) { // Uporabljali za capturego
+								g2.setColor(Color.RED);
+								Vodja.igra.stanje = Stanje.ZMAGA_CRNI;
+								napisNaVrsti(Vodja.igra.naPotezi);
+							}
 						}
-						}
-						g2.fillOval(round(x - 4 * polmer), round(y - 4 * polmer), (int) (2*premer), (int) (2*premer));
+						g2.fillOval(round(x - 4 * polmer), round(y - 4 * polmer), (int) (2 * premer),
+								(int) (2 * premer));
 					}
 				}
 			}
-		}
-		else {
+		} else {
 			naVrsti.setText("Izberite vrsto igre");
 		}
 	}
@@ -216,7 +212,7 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (Vodja.igra != null && Vodja.igra.stanje == Stanje.V_TEKU) {
+		if (Vodja.igra != null && Vodja.igra.stanje == Stanje.V_TEKU && Vodja.vrstaIgralca.get(Vodja.igra.naPotezi()) == vodja.VrstaIgralca.C) {
 			Poteza updated = null;
 			int w = sirinaKvadrata();
 			int odmikSirina = (getWidth() - (Vodja.igra.velikostPlosce * w)) / 2;
@@ -234,27 +230,27 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 			}
 			Vodja.igrajClovekovoPotezo(updated);
 			napisNaVrsti(Vodja.igra.naPotezi);
-			if(updated != null && Vodja.igra.isKoRuleViolation(updated.x(), updated.y())) {
+			if (updated != null && Vodja.igra.isKoRuleViolation(updated.x(), updated.y())) {
 				naVrsti.setText("KO kršitev, izberite drugo potezo!");
-			    int delay = 5000; //5 sekund kaze za napako
+				int delay = 5000; // 5 sekund kaze za napako
 
-			    Timer timer = new Timer(delay, event -> {
-			        napisNaVrsti(Vodja.igra.naPotezi);
-			        repaint();
-			    });
-			    timer.setRepeats(false);
-			    timer.start();
+				Timer timer = new Timer(delay, event -> {
+					napisNaVrsti(Vodja.igra.naPotezi);
+					repaint();
+				});
+				timer.setRepeats(false);
+				timer.start();
 			}
-			if(updated != null && Vodja.igra.isSuicideViolation(updated.x(), updated.y())) {
+			if (updated != null && Vodja.igra.isSuicideViolation(updated.x(), updated.y())) {
 				naVrsti.setText("Samomor kršitev, izberite drugo potezo!");
-			    int delay = 5000; //5 sekund kaze za napako
+				int delay = 5000; // 5 sekund kaze za napako
 
-			    Timer timer = new Timer(delay, event -> {
-			        napisNaVrsti(Vodja.igra.naPotezi);
-			        repaint();
-			    });
-			    timer.setRepeats(false);
-			    timer.start();
+				Timer timer = new Timer(delay, event -> {
+					napisNaVrsti(Vodja.igra.naPotezi);
+					repaint();
+				});
+				timer.setRepeats(false);
+				timer.start();
 			}
 			repaint();
 		}

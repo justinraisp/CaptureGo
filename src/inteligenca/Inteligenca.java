@@ -21,12 +21,12 @@ public class Inteligenca extends KdoIgra {
 	}
 
 	public Poteza izberiPotezo(Igra igraOg) {
-		Igra igra = igraOg.kopija(); //naredimo kopijo igre
+		Igra igra = igraOg.kopija(); // naredimo kopijo igre
 		Igralec igralec = igra.naPotezi;
 		Poteza zmagovalna = null;
-		long endTime = System.currentTimeMillis() + 100; // Za potezo ima 5s
+		long endTime = System.currentTimeMillis() + 5000; // Za potezo ima 5s
 		Igralec nasprotnik = igralec.nasprotnik();
-		Drevo drevo = new Drevo(new Vozel(igra)); //ustvarimo novo drevo in damo trenuten vozel za koren
+		Drevo drevo = new Drevo(new Vozel(igra)); // ustvarimo novo drevo in damo trenuten vozel za koren
 		Vozel korenVozel = drevo.dobiKoren();
 		korenVozel.dobiState().nastaviIgra(igra);
 		korenVozel.nastaviIgralec(igralec);
@@ -50,6 +50,7 @@ public class Inteligenca extends KdoIgra {
 		drevo.nastaviKoren(zmagovalniVozel);
 		Polje originalPolje = igra.dobiPolje();
 		Polje updatedPolje = zmagovalniVozel.dobiPolje();
+		updatedPolje.printGrid();
 		for (int i = 1; i < igra.velikostPlosce + 1; i++) {
 			for (int j = 1; j < igra.velikostPlosce + 1; j++) {
 				if (originalPolje.grid[i][j] == null && updatedPolje.grid[i][j] != null) {
@@ -109,7 +110,7 @@ public class Inteligenca extends KdoIgra {
 	}
 
 	public List<String> odigrajVzporedneIgre(Vozel vozel, Igralec igralec) {
-		int steviloIger = 10; 
+		int steviloIger = 10;
 		ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 		List<Future<String>> results = new ArrayList<>();
 
@@ -236,7 +237,7 @@ public class Inteligenca extends KdoIgra {
 		Igra igra;
 		Igralec igralecNaVrsti;
 		int steviloObiskov;
-		double steviloZmag;
+		int steviloZmag;
 
 		public State(Igra igra) {
 			this.igra = igra;
@@ -245,7 +246,7 @@ public class Inteligenca extends KdoIgra {
 			this.steviloZmag = 0;
 		}
 
-		public State(Igra igra, Igralec igralecNaVrsti, int steviloObiskov, double steviloZmag) {
+		public State(Igra igra, Igralec igralecNaVrsti, int steviloObiskov, int steviloZmag) {
 			this.igra.polje = igra.polje;
 			this.igralecNaVrsti = igralecNaVrsti;
 			this.steviloObiskov = steviloObiskov;
@@ -280,7 +281,7 @@ public class Inteligenca extends KdoIgra {
 			this.steviloObiskov = i;
 		}
 
-		public void nastaviSteviloZmag(double i) {
+		public void nastaviSteviloZmag(int i) {
 			this.steviloZmag = i;
 		}
 
@@ -288,7 +289,7 @@ public class Inteligenca extends KdoIgra {
 			return steviloZmag;
 		}
 
-		public void dodajSteviloZmag(double i) {
+		public void dodajSteviloZmag(int i) {
 			this.steviloZmag += i;
 		}
 
