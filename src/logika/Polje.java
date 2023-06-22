@@ -110,7 +110,7 @@ public class Polje {
 		// ce pridemo do konca je true
 		return true;
 	}
-	public void odstraniUjeteZetone() {
+	public boolean odstraniUjeteZetone(boolean captureGo) {
 		Set<Koordinate> koordinateSet = new HashSet<>();
 	    int N = size;
 	    for (int i = 1; i < N + 1; i++) {
@@ -120,9 +120,11 @@ public class Polje {
 	            }
 	        }
 	    }
+	    if(captureGo && !koordinateSet.isEmpty()) return true;
 	    for (Koordinate koordinate : koordinateSet) {
 	    	this.odstraniZeton(koordinate.getX(), koordinate.getY());
 	    }
+	    return false;
 	}
 	@Override
 	public boolean equals(Object obj) {

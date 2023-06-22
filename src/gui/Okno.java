@@ -29,15 +29,10 @@ import vodja.VrstaIgralca;
 public class Okno extends JFrame implements ActionListener{
 
 	protected IgralnoPolje polje;
-	
-	
-	private JMenuItem igraClovekRacunalnik;
-	private JMenuItem igraRacunalnikClovek;
-	private JMenuItem igraClovekClovek;
-	private JMenuItem igraRacunalnikRacunalnik;
-	private JMenuItem menuOdpri, menuShrani, menuKoncaj;
-	private JMenuItem menuVelikostPlosce;
+
 	private JMenuItem menuBarvaPrvega, menuBarvaDrugega, menuBarvaRoba;
+	private JMenuItem menuNovaIgra;
+	private JMenuItem menuKoncajIgra;
 	private JButton passGumb;
 	private JButton resignGumb;
 	private JLabel naVrsti;
@@ -52,28 +47,14 @@ public class Okno extends JFrame implements ActionListener{
 		
 		JMenuBar menubar = new JMenuBar();
 		setJMenuBar(menubar);
-		
-		JMenu menuDatoteka = dodajMenu(menubar, "Datoteka");
 		JMenu menuIgra = dodajMenu(menubar, "Igra");
 		JMenu menuNastavitve = dodajMenu(menubar, "Nastavitve");
+	    menuNovaIgra = dodajMenuItem(menuIgra, "Nova igra");
 		
-		menuOdpri = dodajMenuItem(menuDatoteka, "Odpri ...");
-		menuShrani = dodajMenuItem(menuDatoteka, "Shrani ...");
-		menuDatoteka.addSeparator();
-		menuKoncaj = dodajMenuItem(menuDatoteka, "Končaj");
-		
-		igraClovekRacunalnik = dodajMenuItem(menuIgra, "Človek vs Računalnik");
-		igraRacunalnikClovek = dodajMenuItem(menuIgra, "Računalnik vs Človek");
-		igraClovekClovek = dodajMenuItem(menuIgra, "Človek vs Človek");
-		igraRacunalnikRacunalnik = dodajMenuItem(menuIgra, "Računalnik vs Računalnik");
-		
-		
-		menuVelikostPlosce = dodajMenuItem(menuNastavitve, "Velikost plošče ...");
 		menuBarvaRoba = dodajMenuItem(menuNastavitve, "Barva roba ...");
 		menuNastavitve.addSeparator();
 		menuBarvaPrvega = dodajMenuItem(menuNastavitve, "Barva prvega igralca ...");
 		menuBarvaDrugega = dodajMenuItem(menuNastavitve, "Barva drugega igralca ...");
-		
 		naVrsti = new JLabel();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -83,11 +64,12 @@ public class Okno extends JFrame implements ActionListener{
     	if(stevec == 0) {
         passGumb = new JButton("Pass");
         passGumb.addActionListener(this);
-        passGumb.setPreferredSize(new Dimension(75,20));
+        passGumb.setPreferredSize(new Dimension(75,15));
         polje.add(passGumb);
+        passGumb.setLocation(0,0);
         resignGumb = new JButton("Resign");
         resignGumb.addActionListener(this);
-        resignGumb.setPreferredSize(new Dimension(75,20));
+        resignGumb.setPreferredSize(new Dimension(75,15));
         polje.add(resignGumb);
         stevec++;
     	}
@@ -110,26 +92,8 @@ public class Okno extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object objekt = e.getSource();
-		if (objekt == menuOdpri) {
-			JFileChooser dialog = new JFileChooser();
-			int izbira = dialog.showOpenDialog(this);
-			if (izbira == JFileChooser.APPROVE_OPTION) {
-				String ime = dialog.getSelectedFile().getPath();
-			}
-		}
-		else if (objekt == menuShrani) {
-			JFileChooser dialog = new JFileChooser();
-			int izbira = dialog.showSaveDialog(this);
-			if (izbira == JFileChooser.APPROVE_OPTION) {
-				String ime = dialog.getSelectedFile().getPath();
-				//polje.graf.shrani(ime);
-			}
-		}
-		else if (objekt == menuKoncaj) {
-			dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-			}
 		
-		else if (objekt == menuBarvaPrvega) {
+		if (objekt == menuBarvaPrvega) {
 			Color barva = JColorChooser.showDialog(this, "Izberi barvo prvega igralca", polje.barvaPrvega);
 			if (barva != null) {
 				polje.barvaPrvega = barva;
@@ -148,42 +112,9 @@ public class Okno extends JFrame implements ActionListener{
 				polje.barvaRoba = barva;
 			}
 		}
-		else if (objekt == menuVelikostPlosce) {
-			String velikostPlosce = JOptionPane.showInputDialog(this, "Velikost plošče:");
-			if (velikostPlosce != null && velikostPlosce.matches("([2-9]|1[0-9])")) {
-				Igra.velikostPlosce =Integer.parseInt(velikostPlosce);
-				Vodja.igramoNovoIgro();
-				
-			}
-		}
-		else if(objekt == igraClovekRacunalnik) {
-			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
-			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C); 
-			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
-			Vodja.igramoNovoIgro();
-			createPassAndResignButton();
-			
-		}
-		 else if (objekt == igraRacunalnikClovek) {
-			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
-			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R); 
-			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.C);
-			Vodja.igramoNovoIgro();
-			createPassAndResignButton();
-		} 
-		 else if (objekt == igraClovekClovek) {
-			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
-			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C); 
-			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.C);
-			Vodja.igramoNovoIgro();
-			createPassAndResignButton();
-		} 
-		 else if (objekt == igraRacunalnikRacunalnik) {
-			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
-			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R); 
-			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
-			Vodja.igramoNovoIgro();
-			createPassAndResignButton();
+
+		else if (objekt == menuNovaIgra) {
+		    novaIgra();
 		} 
 		 else if(objekt == passGumb) {
 			Vodja.pass();
@@ -196,7 +127,125 @@ public class Okno extends JFrame implements ActionListener{
 		repaint();
 	}
 	
+	private void novaIgra() {
+	    Object[] options = {"Go", "CaptureGo"};
+	    int gameType = JOptionPane.showOptionDialog(this, "Izberi vrsto igre:", "Nova igra", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+
+	    if (gameType == 0) {
+	        Object[] playerOptions = {"Igralec vs Igralec", "Igralec vs Računalnik", "Računalnik vs Igralec", "Računalnik vs Računalnik"};
+	        int playerType = JOptionPane.showOptionDialog(this, "Izberi vrsto igralcev:", "Nova igra - Go", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, playerOptions, playerOptions[0]);
+
+	        if (playerType == 0) {
+	            // Igralec vs Igralec
+	            String boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+	            if (boardSize != null && boardSize.matches("([2-9]|1[0-9])")) {
+	    			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+	    			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C); 
+	    			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.C);
+	                int size = Integer.parseInt(boardSize);
+					Igra.velikostPlosce = size;
+					Vodja.igramoNovoIgro(false);
+					createPassAndResignButton();
+	            }
+	        } 
+	        else if (playerType == 1) {
+	            // Igralec vs Računalnik
+	            String boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+	            if (boardSize != null && boardSize.matches("([2-9]|1[0-9])")) {
+	    			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+	    			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C); 
+	    			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
+	                int size = Integer.parseInt(boardSize);
+					Igra.velikostPlosce = size;
+					Vodja.igramoNovoIgro(false);
+					createPassAndResignButton();
+	            }  
+	        }
+	        else if (playerType == 2) {
+	            // Računalnik vs Igralec
+	            String boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+	            if (boardSize != null && boardSize.matches("([2-9]|1[0-9])")) {
+	    			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+	    			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R); 
+	    			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.C);
+	                int size = Integer.parseInt(boardSize);
+					Igra.velikostPlosce = size;
+					Vodja.igramoNovoIgro(false);
+					createPassAndResignButton();
+	            }
+	        }
+	        else if (playerType == 3) {
+	            // Računalnik vs Računalnik
+	            String boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+	            if (boardSize != null && boardSize.matches("([2-9]|1[0-9])")) {
+	    			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+	    			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R); 
+	    			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
+	                int size = Integer.parseInt(boardSize);
+					Igra.velikostPlosce = size;
+					Vodja.igramoNovoIgro(false);
+					createPassAndResignButton();
+	            }
+	        }
+	    } else if (gameType == 1) {
+	        Object[] playerOptions = {"Igralec vs Igralec", "Igralec vs Računalnik", "Računalnik vs Igralec", "Računalnik vs Računalnik"};
+	        int playerType = JOptionPane.showOptionDialog(this, "Izberi vrsto igralcev:", "Nova igra - CaptureGo", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, playerOptions, playerOptions[0]);
+
+	        if (playerType == 0) {
+	            // Igralec vs Igralec
+	            String boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+	            if (boardSize != null && boardSize.matches("([2-9]|1[0-9])")) {
+	    			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+	    			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C); 
+	    			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.C);
+	                int size = Integer.parseInt(boardSize);
+					Igra.velikostPlosce = size;
+					Vodja.igramoNovoIgro(true);
+	            }
+	        } 
+	        else if (playerType == 1) {
+	            // Igralec vs Računalnik
+	            String boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+	            if (boardSize != null && boardSize.matches("([2-9]|1[0-9])")) {
+	    			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+	    			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.C); 
+	    			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
+	                int size = Integer.parseInt(boardSize);
+					Igra.velikostPlosce = size;
+					Vodja.igramoNovoIgro(true);
+	            }  
+	        }
+	        else if (playerType == 2) {
+	            // Računalnik vs Igralec
+	            String boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+	            if (boardSize != null && boardSize.matches("([2-9]|1[0-9])")) {
+	    			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+	    			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R); 
+	    			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.C);
+	                int size = Integer.parseInt(boardSize);
+					Igra.velikostPlosce = size;
+					Vodja.igramoNovoIgro(true);
+	            }
+	        }
+	        else if (playerType == 3) {
+	            // Računalnik vs Računalnik
+	            String boardSize = JOptionPane.showInputDialog(this, "Velikost plošče (2-19):");
+	            if (boardSize != null && boardSize.matches("([2-9]|1[0-9])")) {
+	    			Vodja.vrstaIgralca = new EnumMap<Igralec,VrstaIgralca>(Igralec.class);
+	    			Vodja.vrstaIgralca.put(Igralec.ČRNI, VrstaIgralca.R); 
+	    			Vodja.vrstaIgralca.put(Igralec.BELI, VrstaIgralca.R);
+	                int size = Integer.parseInt(boardSize);
+					Igra.velikostPlosce = size;
+					Vodja.igramoNovoIgro(true);
+	            }
+	        }  
+	    }
 	}
+	
+}
+	
+	
+	
 	
 
 

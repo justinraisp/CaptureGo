@@ -32,6 +32,8 @@ public class Igra {
 	
 	public int tipZmage = -1;
 	
+	public boolean captureGo;
+	
 	// mozne poteze
 
 	// igralno polje
@@ -111,14 +113,10 @@ public class Igra {
 	}
 	
 	public void pass() {
-		System.out.println("Črni prej "+ consecutivePassesCrni);
 		if(naPotezi == Igralec.BELI) consecutivePassesBeli++;
 		else consecutivePassesCrni++;
 		naPotezi = naPotezi.nasprotnik();
-		System.out.println("Črni "+ consecutivePassesCrni);
-		System.out.println("Na potezi: " + naPotezi);
 		stanje = this.konecIgre();
-		System.out.println(stanje);
 	}
 	
 	public void resign() {
@@ -147,21 +145,18 @@ public class Igra {
 		if(semiSuicide(x,y)) semi = true;
 		// Izvedemo potezo
 		polje.dodajZeton(x, y, zeton);
-		naPotezi = naPotezi.nasprotnik();
-		polje.odstraniUjeteZetone();
+		naPotezi = naPotezi.nasprotnik();		
+		if(polje.odstraniUjeteZetone(captureGo)) {
+			tipZmage = 2;
+			if(zeton == zeton.BELI) stanje = stanje.ZMAGA_BELI;
+			else stanje = stanje.ZMAGA_CRNI;
+		}
 		if(semi) polje.dodajZeton(x, y, zeton); //ce je semiSuicide je treba se enkrat dodat kamen, drugace ga tretira kot ujetega
 		
 		if(zeton == Zeton.CRNI) consecutivePassesCrni = 0;
 		if(zeton == Zeton.BELI) consecutivePassesBeli = 0;
-		// Preverimo, če je kateri od igralcev ujel nasprotnikov kamen, uporabljali za capturego
-		//if (polje.polje.isCaptured(x, y)) {
-		//	if (zeton == Zeton.CRNI) {
-		//		stanje = Stanje.ZMAGA_CRNI;
-		//	} else {
-		//		stanje = Stanje.ZMAGA_BELI;
-		//	}
-		//}
 		
+		// Preverimo, če je kateri od igralcev ujel nasprotnikov kamen, uporabljali za capturego
 		
 		prejsnjaStanja.add(polje.kopija());
 		konecIgre();
@@ -283,11 +278,10 @@ public class Igra {
 		if(semiSuicide(x,y)) semi = true;
 		// Izvedemo potezo
 		trenutnoPolje.dodajZeton(x, y, zetonNaPotezi());
-		trenutnoPolje.odstraniUjeteZetone();
+		trenutnoPolje.odstraniUjeteZetone(captureGo);
 		if(semi) trenutnoPolje.dodajZeton(x, y, zetonNaPotezi());
 		for (Polje prejsnjePolje: prejsnjaStanja) {
 			if (prejsnjePolje.equals(trenutnoPolje)) {
-				System.out.println("ko");
 				return true;
 			}
 		}
@@ -455,12 +449,9 @@ public class Igra {
         	stanje = Stanje.ZMAGA_BELI;
         }
         else if(consecutivePasses == 2) {
-        	System.out.println(consecutivePasses);
         	Map<Zeton, Integer> rezultat = calculateScore(polje);
         	if(crniTocke > beliTocke) {
 	        	tipZmage = 1;
-	        	System.out.println(crniTocke);
-	        	System.out.println(beliTocke);
 	        	stanje = Stanje.ZMAGA_CRNI;
         	}
         	else if(crniTocke < beliTocke) {

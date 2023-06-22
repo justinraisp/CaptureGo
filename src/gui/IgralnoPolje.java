@@ -70,11 +70,17 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 		else if (Vodja.igra.stanje == Stanje.ZMAGA_BELI && Vodja.igra.tipZmage == 1) {
 			naVrsti.setText(String.format("Konec igre, zmagal je beli %d proti %d", Vodja.igra.beliTocke, Vodja.igra.crniTocke));
 		}
+		else if (Vodja.igra.stanje == Stanje.ZMAGA_BELI && Vodja.igra.tipZmage == 2) {
+			naVrsti.setText(String.format("Konec igre, zmagal je beli!", Vodja.igra.beliTocke, Vodja.igra.crniTocke));
+		}
 		else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI && Vodja.igra.tipZmage < 1) {
 			naVrsti.setText("Beli se je predal, zmagal je črni!");
 		} 
 		else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI && Vodja.igra.tipZmage == 1) {
 			naVrsti.setText(String.format("Konec igre, zmagal je črni %d proti %d", Vodja.igra.crniTocke, Vodja.igra.beliTocke));
+		}
+		else if (Vodja.igra.stanje == Stanje.ZMAGA_CRNI && Vodja.igra.tipZmage == 2) {
+			naVrsti.setText(String.format("Konec igre, zmagal je črni!", Vodja.igra.crniTocke, Vodja.igra.beliTocke));
 		}
 		else {
 			if (igralec == Igralec.ČRNI) {
@@ -126,23 +132,25 @@ public class IgralnoPolje extends JPanel implements MouseListener, MouseMotionLi
 					int x = (int) ((i) * w + odmikSirina);
 					int y = (int) ((int) ((j) * w) + odmikVisina);
 					if (Vodja.igra.polje.grid[i][j] == Zeton.CRNI) {
-						g2.setColor(Color.BLACK);
-						//g2.drawOval(round(x - 4 * polmer), round(y - 4 * polmer), round(2*premer), round(2*premer));
-						//if (Vodja.igra.polje.isCaptured(i, j)) {		Uporabljali za capturego
-						//	g2.setColor(Color.RED);
-						//	Vodja.igra.stanje = Stanje.ZMAGA_BELI;
-						//	napisNaVrsti(Vodja.igra.naPotezi);
-						//}
+						g2.setColor(barvaPrvega);
+						if(Vodja.igra.captureGo) {
+						if (Vodja.igra.polje.isCaptured(i, j)) {		//Uporabljali za capturego
+							g2.setColor(Color.RED);
+							Vodja.igra.stanje = Stanje.ZMAGA_BELI;
+							napisNaVrsti(Vodja.igra.naPotezi);
+						}
+						}
 						g2.fillOval(round(x - 4 * polmer), round(y - 4 * polmer), (int) (2*premer), (int) (2*premer));
 					} else if (Vodja.igra.polje.grid[i][j] == Zeton.BELI) {
 						//g2.setColor(Color.BLACK);
-						//g2.drawOval(round(x - 4 * polmer), round(y - 4 * polmer), (int) (2*premer), (int) (2*premer));
-						g2.setColor(Color.WHITE);
-						//if (Vodja.igra.polje.isCaptured(i, j)) {		Uporabljali za capturego
-						//	g2.setColor(Color.RED);
-						//	Vodja.igra.stanje = Stanje.ZMAGA_CRNI;
-						//	napisNaVrsti(Vodja.igra.naPotezi);
-						//}
+						g2.setColor(barvaDrugega);
+						if(Vodja.igra.captureGo) {
+						if (Vodja.igra.polje.isCaptured(i, j)) {		//Uporabljali za capturego
+							g2.setColor(Color.RED);
+							Vodja.igra.stanje = Stanje.ZMAGA_CRNI;
+							napisNaVrsti(Vodja.igra.naPotezi);
+						}
+						}
 						g2.fillOval(round(x - 4 * polmer), round(y - 4 * polmer), (int) (2*premer), (int) (2*premer));
 					}
 				}

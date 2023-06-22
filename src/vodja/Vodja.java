@@ -26,8 +26,9 @@ public class Vodja {
 
 	static Inteligenca inteligenca = new Inteligenca();
 
-	public static void igramoNovoIgro() {
+	public static void igramoNovoIgro(boolean captureGo) {
 		igra = new Igra();
+		if(captureGo) igra.captureGo = true;
 		Igralec igralec = igra.naPotezi();
 		IgralnoPolje.napisNaVrsti(igralec);
 		igramo();
