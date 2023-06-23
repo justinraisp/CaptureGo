@@ -63,14 +63,14 @@ public class Okno extends JFrame implements ActionListener {
 
 	private void createPassAndResignButton() {
 		if (stevec == 0) {
-			passGumb = new JButton("Pass");
+			passGumb = new JButton("Preskoči");
 			passGumb.addActionListener(this);
-			passGumb.setPreferredSize(new Dimension(75, 15));
+			passGumb.setPreferredSize(new Dimension(85, 15));
 			polje.add(passGumb);
 			passGumb.setLocation(0, 0);
-			resignGumb = new JButton("Resign");
+			resignGumb = new JButton("Predaja");
 			resignGumb.addActionListener(this);
-			resignGumb.setPreferredSize(new Dimension(75, 15));
+			resignGumb.setPreferredSize(new Dimension(85, 15));
 			polje.add(resignGumb);
 			stevec++;
 		}
